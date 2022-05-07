@@ -1,6 +1,6 @@
 import serverStates
 
-class server:
+class Server:
   def __init__(self) -> None:
     self.state = serverStates.initialState()
     pass
