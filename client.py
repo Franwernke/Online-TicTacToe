@@ -1,11 +1,19 @@
 #!/bin/python3
 
 from clientStates import *
+from socket import *
+import sys
 
 class Client:
-  def __init__(self) -> None:
+  def __init__(self, address, port, typeOfConnection) -> None:
     self.state = InitialState()
-    pass
+    self.sockfd = socket(AF_INET, SOCK_STREAM if typeOfConnection == "tcp" else SOCK_DGRAM)
+    self.serverAddress = (address, int(port))
+    self.typeOfConnection = typeOfConnection
+
+    if typeOfConnection == "tcp":
+      self.sockfd.connect(self.serverAddress)
+    
 
   def changeState(self, newState):
     self.state = newState
@@ -40,8 +48,18 @@ class Client:
   def logout(self):
     self.state.logout(self)
 
+  def sendMessage(self, messageStr):
+
+    message = bytes(messageStr, "utf-8")
+    if self.typeOfConnection == "tcp":
+      self.sockfd.send(message)
+      return self.sockfd.recv(4096).decode("utf-8")
+    else:
+      self.sockfd.sendto(message, self.serverAddress)
+      return self.sockfd.recvfrom(4096)[0].decode("utf-8")
+
 def main():
-  client = Client()
+  client = Client(sys.argv[1], sys.argv[2], sys.argv[3])
   command = input("JogoDaVelha> ").split()
 
   while command[0] != "bye":

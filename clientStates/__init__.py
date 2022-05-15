@@ -1,10 +1,15 @@
 class InitialState():
   def createNewUser(self, client, user, password):
-    print("Usuário: ", user, "Senha: ", password)
+    client.sendMessage("new " + user + " " + password)
   
   def loginUser(self, client, user, password):
-    print("Usuário: ", user, "Senha: ", password)
-    client.changeState(LoggedIn())
+    response = client.sendMessage("in " + user + " " + password)
+
+    if response == "ok":
+      client.user = user
+      client.changeState(LoggedIn())
+    else:
+      print(response)
 
   def changeUserPassword(self, client, oldPassword, newPassword):
     print("Você precisa logar antes de alterar a senha!!!")
