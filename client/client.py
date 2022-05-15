@@ -53,10 +53,8 @@ class Client:
     message = bytes(messageStr, "utf-8")
     if self.typeOfConnection == "tcp":
       self.sockfd.send(message)
-      return self.sockfd.recv(4096).decode("utf-8")
     else:
       self.sockfd.sendto(message, self.serverAddress)
-      return self.sockfd.recvfrom(4096)[0].decode("utf-8")
 
 def main():
   client = Client(sys.argv[1], sys.argv[2], sys.argv[3])
