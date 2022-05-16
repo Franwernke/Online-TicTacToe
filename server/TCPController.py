@@ -26,6 +26,7 @@ class TCPController(GenericController):
         if (childpid == 0):
           print("Um novo cliente se conectou!")
           self.listenfdTCP.close()
+          self.address = address
 
           recvline = connfd.recv(4096)
           while recvline:
@@ -45,5 +46,5 @@ class TCPController(GenericController):
 
   def resolveMessage(self, message: str, connfd: socket):
     command = message.split()
-    responseString = self.getResponse(command)
+    responseString = self.getResponse(command, self.address)
     self.sendMessage(responseString, connfd)

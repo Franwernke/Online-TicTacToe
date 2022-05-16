@@ -1,9 +1,10 @@
 from exceptions.UserNotFoundException import UserNotFoundException
 from exceptions.WrongPasswordException import WrongPasswordException
 from exceptions.UserAlreadyExists import UserAlreadyExists
+from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
 
 class GenericController:
-  def getResponse(self, command):
+  def getResponse(self, command, address):
 
     if command[0] == "new":
       try:
@@ -23,18 +24,22 @@ class GenericController:
 
     elif command[0] == "in":
       try:
-        self.server.loginUser(command[1], command[2])
+        self.server.loginUser(command[1], command[2], address)
         return "OK"
       except UserNotFoundException as e:
         return e.message
       except WrongPasswordException as e:
         return e.message
+      except UserAlreadyLoggedIn as e:
+        return e.message
+      except Exception as e:
+        print(e)
 
     elif command[0] == "halloffame":
-       return str(self.server.showHallOfFame())
+      return str(self.server.showHallOfFame())
 
-    # elif command[0] == "l":
-    #   client.showOnlinePlayers()
+    elif command[0] == "l":
+      return str(self.server.showOnlinePlayers())
 
     # elif command[0] == "call":
     #   if (len(command) < 2):

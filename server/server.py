@@ -10,10 +10,12 @@ class Server:
     self.repository.createNewUser(username, password)
     self.repository.changeUserScore(username, 0)
 
-  def loginUser(self, username, password):
+  def loginUser(self, username, password, address):
     user = self.repository.getUser(username)
     if user.password != password:
       raise WrongPasswordException()
+    self.repository.createOnlinePlayer(username, address)
+
 
   def changePassword(self, username, oldPassword, newPassword):
     user = self.repository.getUser(username)
@@ -25,5 +27,8 @@ class Server:
 
   def showHallOfFame(self):
     return self.repository.getScores()
+  
+  def showOnlinePlayers(self):
+    return self.repository.getOnlinePlayers()
 
 

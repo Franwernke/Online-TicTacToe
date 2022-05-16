@@ -25,7 +25,8 @@ class InitialState():
     print(response)
   
   def showOnlinePlayers(self, client):
-    print("Vinicius (Francisco ta casado :( )")
+    response = client.sendMessage("l")
+    print(response)
 
   def invitePlayer(self, client, opponent):
     print("Você precisa estar logado para jogar!!!")
@@ -63,7 +64,8 @@ class LoggedIn():
     print(response)
   
   def showOnlinePlayers(self, client):
-    print("Vinicius (Francisco ta casado :( )")
+    response = client.sendMessage("l")
+    print(response)
 
   def invitePlayer(self, client, opponent):
     print("Achando oponente...")
@@ -100,7 +102,8 @@ class MyTurn():
     print(response)
   
   def showOnlinePlayers(self, client):
-    print("Vinicius (Francisco ta casado :( )")
+    response = client.sendMessage("l")
+    print(response)
 
   def invitePlayer(self, client, opponent):
     print("usuario {opponent} te passas a bufa, aceitas?")
@@ -132,8 +135,9 @@ class HisTurn():
     response = client.sendMessage("halloffame")
     print(response)
   
-  def showOnlinePlayers(self, *args):
-    print("Vinicius (Francisco ta casado :( )")
+  def showOnlinePlayers(self, client):
+    response = client.sendMessage("l")
+    print(response)
 
   def invitePlayer(self, *args):
     print("usuario {opponent} te passas a bufa, aceitas?")
