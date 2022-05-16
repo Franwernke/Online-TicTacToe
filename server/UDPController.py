@@ -1,7 +1,9 @@
 import os
 from socket import *
 import sys
-from server import Server
+from Server import Server
+from exceptions.UserNotFoundException import UserNotFoundException
+from exceptions.WrongPasswordException import WrongPasswordException
 
 class UDPController:
   def __init__(self, port, server: Server):
@@ -18,6 +20,10 @@ class UDPController:
         print("Received from UDP: " + recvline[0].decode("utf-8"))
         sys.stdout.flush()
 
+  def sendMessage(self, messageStr, address):
+    message = bytes(messageStr, "utf-8")
+    self.listenfd.sendto(message, address)
+
   def resolveMessage(self, message, address):
     command = message.split()
 
@@ -30,8 +36,14 @@ class UDPController:
     #   else:
     #     client.changeUserPassword(command[1], command[2])
 
-    # elif command[0] == "in":
-    #   user = self.repository.getUser(command[1])
+    elif command[0] == "in":
+      try:
+        self.server.loginUser(command[1], command[2])
+        self.sendMessage("OK", address)
+      except UserNotFoundException as e:
+        self.sendMessage(e.message, address)
+      except WrongPasswordException as e:
+        self.sendMessage(e.message, address)
 
     #   if user:
     #     if user.password == command[2]:

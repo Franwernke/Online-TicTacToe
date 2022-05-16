@@ -4,6 +4,8 @@ from clientStates import *
 from socket import *
 import sys
 
+ENCODING = 'utf-8'
+
 class Client:
   def __init__(self, address, port, typeOfConnection) -> None:
     self.state = InitialState()
@@ -49,12 +51,13 @@ class Client:
     self.state.logout(self)
 
   def sendMessage(self, messageStr):
-
-    message = bytes(messageStr, "utf-8")
+    message = bytes(messageStr, ENCODING)
     if self.typeOfConnection == "tcp":
       self.sockfd.send(message)
+      return self.sockfd.recv(4096).decode(ENCODING)
     else:
       self.sockfd.sendto(message, self.serverAddress)
+      return self.sockfd.recvfrom(4096)[0].decode(ENCODING)
 
 def main():
   client = Client(sys.argv[1], sys.argv[2], sys.argv[3])

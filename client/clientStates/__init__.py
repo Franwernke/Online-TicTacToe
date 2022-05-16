@@ -5,7 +5,7 @@ class InitialState():
   def loginUser(self, client, user, password):
     response = client.sendMessage("in " + user + " " + password)
 
-    if response == "ok":
+    if response == "OK":
       client.user = user
       client.changeState(LoggedIn())
     else:

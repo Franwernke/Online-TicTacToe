@@ -1,10 +1,12 @@
 from socket import *
 import sys
 import os
-from server import Server
+from Server import Server
+from exceptions.UserNotFoundException import UserNotFoundException
+from exceptions.WrongPasswordException import WrongPasswordException
 
 class TCPController:
-  def __init__(self, port, server: Server):
+  def __init__(self, port: int, server: Server):
     self.server = server
     self.listenfdTCP = socket(AF_INET, SOCK_STREAM)
     self.listenfdTCP.bind((str(INADDR_ANY), port))
@@ -38,7 +40,11 @@ class TCPController:
         else:
           connfd.close()
   
-  def resolveMessage(self, message, connfd):
+  def sendMessage(self, messageStr: str, connfd: socket):
+    message = bytes(messageStr, "utf-8")
+    connfd.send(message)
+
+  def resolveMessage(self, message: str, connfd: socket):
     command = message.split()
 
     if command[0] == "new":
@@ -50,8 +56,14 @@ class TCPController:
     #   else:
     #     client.changeUserPassword(command[1], command[2])
 
-    # elif command[0] == "in":
-    #   user = self.repository.getUser(command[1])
+    elif command[0] == "in":
+      try:
+        self.server.loginUser(command[1], command[2])
+        self.sendMessage("OK", connfd)
+      except UserNotFoundException as e:
+        self.sendMessage(e.message, connfd)
+      except WrongPasswordException as e:
+        self.sendMessage(e.message, connfd)
 
     #   if user:
     #     if user.password == command[2]:
