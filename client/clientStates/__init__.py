@@ -1,6 +1,11 @@
 class InitialState():
   def createNewUser(self, client, user, password):
-    client.sendMessage("new " + user + " " + password)
+    response = client.sendMessage("new " + user + " " + password)
+    
+    if response == "OK":
+      print("Usuário criado com sucesso!")
+    else:
+      print(response)
   
   def loginUser(self, client, user, password):
     response = client.sendMessage("in " + user + " " + password)

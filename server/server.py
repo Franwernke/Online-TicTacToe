@@ -1,5 +1,5 @@
 from socket import *
-from Repository import Repository
+from repository import Repository
 from exceptions.WrongPasswordException import WrongPasswordException
 
 class Server:

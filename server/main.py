@@ -3,8 +3,8 @@
 import sys
 from TCPController import TCPController
 from UDPController import UDPController
-from Repository import Repository
-from Server import Server
+from repository import Repository
+from server import Server
 
 def main():
   port = int(sys.argv[1])

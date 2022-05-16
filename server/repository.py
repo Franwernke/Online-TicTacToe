@@ -2,6 +2,7 @@ import os
 from socket import *
 from User import User
 from exceptions.UserNotFoundException import UserNotFoundException
+from exceptions.UserAlreadyExists import UserAlreadyExists
 
 BASEPATH = "/tmp/ep2/"
 USERPATH = "users/"
@@ -12,8 +13,11 @@ class Repository:
       os.makedirs(BASEPATH + "users")
 
   def createNewUser(self, user, password):
-    file = open(BASEPATH + USERPATH + user, "w")
-    file.write(password)
+    if not os.path.exists(BASEPATH + USERPATH + user):
+      file = open(BASEPATH + USERPATH + user, "w")
+      file.write(password)
+    else:
+      raise UserAlreadyExists
 
   def getUser(self, user):
     if os.path.exists(BASEPATH + USERPATH + user):
