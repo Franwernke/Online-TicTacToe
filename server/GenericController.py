@@ -30,8 +30,8 @@ class GenericController:
       except WrongPasswordException as e:
         return e.message
 
-    # elif command[0] == "halloffame":
-    #   client.showHallOfFame()
+    elif command[0] == "halloffame":
+       return str(self.server.showHallOfFame())
 
     # elif command[0] == "l":
     #   client.showOnlinePlayers()

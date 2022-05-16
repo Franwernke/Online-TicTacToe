@@ -21,7 +21,8 @@ class InitialState():
     print("Você precisa logar antes de alterar a senha!!!")
 
   def showHallOfFame(self, client):
-    print("Hall of Fame: Francisco 1 Vinicius 1 tbm pq é lindo")
+    response = client.sendMessage("halloffame")
+    print(response)
   
   def showOnlinePlayers(self, client):
     print("Vinicius (Francisco ta casado :( )")
@@ -58,7 +59,8 @@ class LoggedIn():
       print(response)
   
   def showHallOfFame(self, client):
-    print("Hall of Fame: Francisco 1 Vinicius 1 tbm pq é lindo")
+    response = client.sendMessage("halloffame")
+    print(response)
   
   def showOnlinePlayers(self, client):
     print("Vinicius (Francisco ta casado :( )")
@@ -94,7 +96,8 @@ class MyTurn():
     print("Senha antiga: ", oldPassword, "Senha atual: ", newPassword)
   
   def showHallOfFame(self, client):
-    print("Hall of Fame: Francisco 1 Vinicius 1 tbm pq é lindo")
+    response = client.sendMessage("halloffame")
+    print(response)
   
   def showOnlinePlayers(self, client):
     print("Vinicius (Francisco ta casado :( )")
@@ -125,8 +128,9 @@ class HisTurn():
   def changeUserPassword(self, client, oldPassword, newPassword):
     print("Senha antiga: ", oldPassword, "Senha atual: ", newPassword)
   
-  def showHallOfFame(self, *args):
-    print("Hall of Fame: Francisco 1 Vinicius 1 tbm pq é lindo")
+  def showHallOfFame(self, client):
+    response = client.sendMessage("halloffame")
+    print(response)
   
   def showOnlinePlayers(self, *args):
     print("Vinicius (Francisco ta casado :( )")

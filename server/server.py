@@ -8,6 +8,7 @@ class Server:
 
   def createNewUser(self, username, password):
     self.repository.createNewUser(username, password)
+    self.repository.changeUserScore(username, 0)
 
   def loginUser(self, username, password):
     user = self.repository.getUser(username)
@@ -21,5 +22,8 @@ class Server:
       raise WrongPasswordException()
     else:
       self.repository.changePassword(username, newPassword)
+
+  def showHallOfFame(self):
+    return self.repository.getScores()
 
 
