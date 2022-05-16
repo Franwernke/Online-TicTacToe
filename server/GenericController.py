@@ -12,11 +12,14 @@ class GenericController:
       except UserAlreadyExists as e:
         return e.message
 
-    # elif command[0] == "pass":
-    #   if (len(command) < 3):
-    #     print("Uso: pass <old_password> <new_password>")
-    #   else:
-    #     client.changeUserPassword(command[1], command[2])
+    elif command[0] == "pass":
+      try:
+        self.server.changePassword(command[1], command[2], command[3])
+        return "OK"
+      except UserNotFoundException as e:
+        return e.message
+      except WrongPasswordException as e:
+        return e.message
 
     elif command[0] == "in":
       try:
@@ -26,19 +29,6 @@ class GenericController:
         return e.message
       except WrongPasswordException as e:
         return e.message
-
-    #   if user:
-    #     if user.password == command[2]:
-    #       response = "OK"
-    #     else:
-    #       response = "Senha incorreta"
-    #   else:
-    #     response = "Usuário não encontrado"
-
-    #   if connfd == None:
-    #     connfd.send(bytes(response, "utf-8"))
-    #   else:
-    #     connfd.sendto(bytes(response, "utf-8"), address)
 
     # elif command[0] == "halloffame":
     #   client.showHallOfFame()

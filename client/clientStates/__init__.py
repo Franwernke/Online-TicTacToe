@@ -11,6 +11,7 @@ class InitialState():
     response = client.sendMessage("in " + user + " " + password)
 
     if response == "OK":
+      print("Login efetuado com sucesso!")
       client.user = user
       client.changeState(LoggedIn())
     else:
@@ -49,7 +50,12 @@ class LoggedIn():
     print("Saia primeiro antes de logar em outra conta!!!")
 
   def changeUserPassword(self, client, oldPassword, newPassword):
-    print("Senha antiga: ", oldPassword, "Senha atual: ", newPassword)
+    response = client.sendMessage("pass " + client.user + " " + oldPassword + " " + newPassword)
+  
+    if response == "OK":
+      print("Alteração de senha efetuada com sucesso!")
+    else:
+      print(response)
   
   def showHallOfFame(self, client):
     print("Hall of Fame: Francisco 1 Vinicius 1 tbm pq é lindo")

@@ -13,3 +13,13 @@ class Server:
     user = self.repository.getUser(username)
     if user.password != password:
       raise WrongPasswordException()
+
+  def changePassword(self, username, oldPassword, newPassword):
+    user = self.repository.getUser(username)
+
+    if user.password != oldPassword:
+      raise WrongPasswordException()
+    else:
+      self.repository.changePassword(username, newPassword)
+
+

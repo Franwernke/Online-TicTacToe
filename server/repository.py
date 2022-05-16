@@ -27,3 +27,7 @@ class Repository:
       return User(username, password)
     else:
       raise UserNotFoundException()
+
+  def changePassword(self, user, newPassword):
+    file = open(BASEPATH + USERPATH + user, "w")
+    file.write(newPassword)
