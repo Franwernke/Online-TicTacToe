@@ -84,8 +84,14 @@ class LoggedIn():
     print("Você não está em nenhuma partida!!!")
 
   def logout(self, client):
-    print("deslologando")
-    client.changeState(InitialState())
+    response = client.sendMessage("out " + client.user)
+
+    if response == "OK":
+      print("deslogado!")
+      client.user = None
+      client.changeState(InitialState())
+    else:
+      print(response)
 
 class MyTurn():
   def createNewUser(self, client, user, password):
@@ -118,8 +124,7 @@ class MyTurn():
     print("Você não está em nenhuma partida!!!")
 
   def logout(self, client):
-    print("deslologando")
-    client.changeState(InitialState())
+    print("Saia do jogo antes de deslogar!!!")
 
 class HisTurn():
   def createNewUser(self, *args):
@@ -152,5 +157,4 @@ class HisTurn():
     print("Você não está em nenhuma partida!!!")
 
   def logout(self, client):
-    print("deslologando")
-    client.changeState(InitialState())
+    print("Saia do jogo antes de deslogar!!!")

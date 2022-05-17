@@ -59,5 +59,6 @@ class GenericController:
     # elif command[0] == "over":
     #   client.endGame()
 
-    # elif command[0] == "out":
-    #   client.logout()
+    elif command[0] == "out":
+      self.server.logout(command[1])
+      return "OK"

@@ -68,3 +68,6 @@ class Repository:
       onlinePlayers.append((user, userData[3]))
 
     return onlinePlayers
+
+  def removeOnlinePlayer(self, user):
+    os.remove(BASEPATH + "online/" + user)

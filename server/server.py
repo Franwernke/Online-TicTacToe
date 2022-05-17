@@ -31,4 +31,7 @@ class Server:
   def showOnlinePlayers(self):
     return self.repository.getOnlinePlayers()
 
+  def logout(self, username):
+    self.repository.removeOnlinePlayer(username)
+
 
