@@ -25,5 +25,5 @@ class UDPController(GenericController):
 
   def resolveMessage(self, message, address):
     command = message.split()
-    responseString = self.getResponse(command, address)
+    responseString = self.processCommand(command, address)
     self.sendMessage(responseString, address)

@@ -4,7 +4,7 @@ from exceptions.UserAlreadyExists import UserAlreadyExists
 from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
 
 class GenericController:
-  def getResponse(self, command, address):
+  def processCommand(self, command, address):
 
     if command[0] == "new":
       try:

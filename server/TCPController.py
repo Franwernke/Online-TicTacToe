@@ -46,5 +46,5 @@ class TCPController(GenericController):
 
   def resolveMessage(self, message: str, connfd: socket):
     command = message.split()
-    responseString = self.getResponse(command, self.address)
+    responseString = self.processCommand(command, self.address)
     self.sendMessage(responseString, connfd)
