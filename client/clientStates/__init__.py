@@ -46,7 +46,7 @@ class InitialState():
 
 class LoggedIn():
   def createNewUser(self, client, user, password):
-    print("Usuário: ", user, "Senha: ", password)
+    print("Saia antes de criar um novo usuário!")
   
   def loginUser(self, client, user, password):
     print("Saia primeiro antes de logar em outra conta!!!")
