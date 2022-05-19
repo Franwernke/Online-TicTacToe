@@ -1,16 +1,18 @@
 import sys
 from serverTCP import ServerTCP
-from clientTCP import ClientTCP
-from clientUDP import ClientUDP
+from TCPController import TCPController
+from UDPController import UDPController
+from client import Client
 
 def main():
   if sys.argv[3] == "tcp":
-    client = ClientTCP(sys.argv[1], sys.argv[2])
+    controller = TCPController(sys.argv[1], sys.argv[2])
   else:
-    client = ClientUDP(sys.argv[1], sys.argv[2])
+    controller = UDPController(sys.argv[1], sys.argv[2])
 
   server = ServerTCP()
-  server.acceptConnections()
+
+  client = Client(controller, server)
 
   command = input("JogoDaVelha> ").split()
   while command[0] != "bye":

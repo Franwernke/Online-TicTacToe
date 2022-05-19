@@ -6,8 +6,12 @@ from socket import *
 ENCODING = 'utf-8'
 
 class Client:
-  def __init__(self) -> None:
+  def __init__(self, controller, server) -> None:
     self.state = InitialState()
+    self.controller = controller
+    self.server = server
+
+    self.server.acceptConnections()
 
   def changeState(self, newState):
     self.state = newState
@@ -28,7 +32,7 @@ class Client:
     self.state.showOnlinePlayers(self)
 
   def invitePlayer(self, opponent):
-    self.state.invitePlayer(self, opponent)
+    print(self.state.invitePlayer(self, opponent))
 
   def sendMove(self, line, column):
     self.state.sendMove(self, line, column)
@@ -42,4 +46,5 @@ class Client:
   def logout(self):
     self.state.logout(self)
 
-
+  def sendMessage(self, message):
+    return self.controller.sendMessage(message)

@@ -1,12 +1,10 @@
 #!/bin/python3
 from socket import *
-from client import Client
 
 ENCODING = 'utf-8'
 
-class ClientTCP(Client):
+class TCPController:
   def __init__(self, address, port) -> None:
-    super().__init__()
 
     self.sockfd = socket(AF_INET, SOCK_STREAM)
     self.serverAddress = (address, int(port))

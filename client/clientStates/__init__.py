@@ -68,11 +68,16 @@ class LoggedIn():
     print(response)
 
   def invitePlayer(self, client, opponent):
-    print("Achando oponente...")
-    if (opponent == "myturn"):
+    response = client.sendMessage("call " + client.user + " " + opponent).split()
+    if response[0] == "BUSY":
+      print("O usuário convidado está ocupado!")
+    elif response[0] == "OFFLINE":
+      print("O usuário convidado está desconectado!")
+    elif response[1] == "myturn":
       client.changeState(MyTurn())
     else:
       client.changeState(HisTurn())
+    return response
 
   def sendMove(self, client, line, column):
     print("Você não está jogando!!!")
