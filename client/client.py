@@ -18,8 +18,8 @@ class Client:
   def changeUserPassword(self, oldPassword, newPassword):
     self.state.changeUserPassword(self, oldPassword, newPassword)
   
-  def loginUser(self, user, password):
-    self.state.loginUser(self, user, password)
+  def loginUser(self, user, password, port):
+    self.state.loginUser(self, user, password, port)
   
   def showHallOfFame(self):
     self.state.showHallOfFame(self)

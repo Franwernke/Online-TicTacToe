@@ -7,8 +7,8 @@ class InitialState():
     else:
       print(response)
   
-  def loginUser(self, client, user, password):
-    response = client.sendMessage("in " + user + " " + password)
+  def loginUser(self, client, user, password, port):
+    response = client.sendMessage("in " + user + " " + password + " " + port)
 
     if response == "OK":
       print("Login efetuado com sucesso!")
@@ -48,7 +48,7 @@ class LoggedIn():
   def createNewUser(self, client, user, password):
     print("Saia antes de criar um novo usuário!")
   
-  def loginUser(self, client, user, password):
+  def loginUser(self, client, user, password, port):
     print("Saia primeiro antes de logar em outra conta!!!")
 
   def changeUserPassword(self, client, oldPassword, newPassword):
@@ -97,7 +97,7 @@ class MyTurn():
   def createNewUser(self, client, user, password):
     print("Espere a partida acabar para realizar esta ação")
   
-  def loginUser(self, client, user, password):
+  def loginUser(self, client, user, password, port):
     print("Saia primeiro antes de logar em outra conta!!!")
 
   def changeUserPassword(self, client, oldPassword, newPassword):

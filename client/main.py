@@ -1,4 +1,5 @@
 import sys
+from serverTCP import ServerTCP
 from clientTCP import ClientTCP
 from clientUDP import ClientUDP
 
@@ -7,6 +8,9 @@ def main():
     client = ClientTCP(sys.argv[1], sys.argv[2])
   else:
     client = ClientUDP(sys.argv[1], sys.argv[2])
+
+  server = ServerTCP()
+  server.acceptConnections()
 
   command = input("JogoDaVelha> ").split()
   while command[0] != "bye":
@@ -26,7 +30,7 @@ def main():
       if (len(command) < 3):
         print("Uso: in <username> <password>")
       else:
-        client.loginUser(command[1], command[2])
+        client.loginUser(command[1], command[2], str(server.getPort()))
 
     elif command[0] == "halloffame":
       client.showHallOfFame()
