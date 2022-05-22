@@ -26,14 +26,14 @@ class Server:
       self.repository.changePassword(username, newPassword)
 
   def showHallOfFame(self):
-    return self.repository.getScores()
+    return sorted(self.repository.getScores().items(), key=lambda score: score[1], reverse=True)
   
   def showOnlinePlayers(self):
-    return self.repository.getOnlinePlayers()
+    return self.repository.listOnlinePlayers()
 
   def invitePlayer(self, invitingUser, invitedUser):
     try:
-      pass
+      self.repository.getOnlinePlayer()
     except:
       pass
   

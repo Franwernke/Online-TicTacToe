@@ -11,7 +11,7 @@ USERPATH = "users/"
 class Repository:
   def __init__(self):
     if not os.path.exists(BASEPATH + "users"):
-      os.makedirs(BASEPATH + "users")
+      os.makedirs(BASEPATH + "users") 
 
     if not os.path.exists(BASEPATH + "scores"):
       os.makedirs(BASEPATH + "scores")
@@ -33,7 +33,6 @@ class Repository:
       file.write(user + " " + str(address[0]) + " " + str(address[1]) + " livre")
     else:
       raise UserAlreadyLoggedIn
-
 
   def changeUserScore(self, user, score):
     file = open(BASEPATH + "scores/" + user, "w")
@@ -60,7 +59,7 @@ class Repository:
 
     return scores
 
-  def getOnlinePlayers(self):
+  def listOnlinePlayers(self):
     onlinePlayers = list()
     for user in os.listdir(BASEPATH + "online"):
       file = open(BASEPATH + "online/" + user)

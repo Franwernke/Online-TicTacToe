@@ -20,7 +20,7 @@ class FifoRouter:
           self.controller.answerHeartbeat()
         else:
           if command == 'invite':
-            fifoFd = open(self.heartbeatFifoPath, "w")
+            fifoFd = open(self.inviteFifoPath, "w")
           else:
             fifoFd = open(self.commandResponseFifoPath, "w")
         

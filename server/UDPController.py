@@ -30,6 +30,7 @@ class UDPController(GenericController):
 
   def resolveMessage(self, message, address):
     command = message.split()
+    # self.writeInFifo()
     responseString = self.processCommand(command, address)
 
     if responseString != "DONOTANSWER":

@@ -83,9 +83,10 @@ def main():
       print("Insira um comando válido!")
 
     command = input("JogoDaVelha> ").split()
+  sys.exit()
 
 def cleanup():
-  os.killpg(0, signal.SIGKILL)
+  os.killpg(-1, signal.SIGKILL)
 
 if __name__ == "__main__":
   os.setpgrp()

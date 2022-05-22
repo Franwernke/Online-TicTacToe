@@ -40,3 +40,31 @@ class ServerTCP:
 
   def getPort(self):
     return self.listenfdTCP.getsockname()[1]
+
+
+
+'''
+  Client TCP (2 sockets):
+    Servidor - Cliente 
+      socket TCP
+      - enviar comandos
+      - receber respostas do comando (FIFO)
+      - heartbeat (FIFO)
+      - invites de jogo (FIFO)
+    Client - Client (serverTCP.py para quem recebe o invite, TCPController.py para quem envia invite)
+      socket TCP
+      - receber jogadas
+      - receber comandos de partida (out)
+  
+  Client UDP (2 sockets):
+    Servidor - Client
+      socket UDP
+      - enviar comandos
+      - receber respostas do comando
+      - heartbeat
+      - invites de jogo
+    Client - Client
+      socket TCP
+      - receber jogadas
+      - receber comandos de partida (out)
+'''

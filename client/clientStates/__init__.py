@@ -73,7 +73,7 @@ class LoggedIn():
       print("O usuário convidado está ocupado!")
     elif response[0] == "OFFLINE":
       print("O usuário convidado está desconectado!")
-    elif response[1] == "myturn":
+    elif response[1] == "X":
       client.changeState(MyTurn())
     else:
       client.changeState(HisTurn())

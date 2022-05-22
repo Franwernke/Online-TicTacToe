@@ -1,0 +1,33 @@
+Client TCP (2 sockets):
+  Servidor - Cliente 
+    socket TCP
+    - enviar comandos
+    - receber respostas do comando (FIFO)
+    - heartbeat (FIFO)
+    - invites de jogo (FIFO)
+  Client - Client (serverTCP.py para quem recebe o invite, TCPController.py para quem envia invite)
+    socket TCP
+    - receber jogadas
+    - receber comandos de partida (out)
+
+Client UDP (2 sockets):
+  Servidor - Client
+    socket UDP
+    - enviar comandos
+    - receber respostas do comando
+    - heartbeat
+    - invites de jogo
+  Client - Client
+    socket TCP
+    - receber jogadas
+    - receber comandos de partida (out)
+
+client1 client2 servidor
+História:
+  client1 -call-> servidor (call <invintingUser> <invitedUser> no caso o username do client2)
+  servidor -call-> client2 (call <invintingUser> <invitedUser>) (servidor se comunica com FIFO do cliente no TCP e IP/Porta do cliente no UDP)
+  client2 -accept-> servidor (accept <invintingUser> <invitedUser> no caso o username do client1) 
+                             (servidor se comunica com o processo do client1 via FIFO)
+  servidor -OK-> client2 (start <X/O>)
+  servidor -OK-> client1 (start <X/O> <IP> <Porta>) (Servidor passa IPPorta do client2 para o client1)
+  client1 -Letsgo-> client2
