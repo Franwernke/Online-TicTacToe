@@ -6,11 +6,9 @@ from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
 
 class GenericController:
   def delayHeartbeat(self):
-    sleep(1)
-
+    sleep(10)
 
   def processCommand(self, command, address):
-
     if command[0] == "new":
       try:
         self.server.createNewUser(command[1], command[2])

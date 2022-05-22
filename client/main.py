@@ -1,5 +1,7 @@
+import atexit
 import os
 import shutil
+import signal
 import sys
 from FifoRouter import FifoRouter
 from serverTCP import ServerTCP
@@ -29,7 +31,9 @@ def main():
 
   client = Client(controller, server)
 
-  command = input("JogoDaVelha> ").split()
+  atexit.register(cleanup)
+
+  command = input("JogoDaVelha> ").split()  
   while command[0] != "bye":
     if command[0] == "new":
       if (len(command) < 3):
@@ -80,5 +84,9 @@ def main():
 
     command = input("JogoDaVelha> ").split()
 
+def cleanup():
+  os.killpg(0, signal.SIGKILL)
 
-main()
+if __name__ == "__main__":
+  os.setpgrp()
+  main()
