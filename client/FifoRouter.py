@@ -18,13 +18,14 @@ class FifoRouter:
         
         if command == 'heartbeat':
           self.controller.answerHeartbeat()
-        elif command == 'invite':
-          fifoFd = open(self.heartbeatFifoPath, "w")
         else:
-          fifoFd = open(self.commandResponseFifoPath, "w")
+          if command == 'invite':
+            fifoFd = open(self.heartbeatFifoPath, "w")
+          else:
+            fifoFd = open(self.commandResponseFifoPath, "w")
         
-        fifoFd.write(message)
-        fifoFd.close()
+          fifoFd.write(message)
+          fifoFd.close()
 
 
 

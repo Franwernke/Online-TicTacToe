@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 from FifoRouter import FifoRouter
 from serverTCP import ServerTCP
@@ -6,10 +7,15 @@ from TCPController import TCPController
 from UDPController import UDPController
 from client import Client
 
+BASEPATH = '/tmp/ep2/client/'
 
 def main():
-  commandResponseFifoPath = '/tmp/ep2/client/' + str(os.getpgid()) + '/FIFOs/command'
-  inviteFifoPath = '/tmp/ep2/client/' + str(os.getpgid()) + '/FIFOs/invite'
+  if os.path.exists(BASEPATH + str(os.getpid()) + '/FIFOs/'):
+    shutil.rmtree(BASEPATH + str(os.getpid()) + '/FIFOs/')
+  os.makedirs(BASEPATH + str(os.getpid()) + '/FIFOs/')
+
+  commandResponseFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/command'
+  inviteFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/invite'
 
   if sys.argv[3] == "tcp":
     controller = TCPController(sys.argv[1], sys.argv[2], commandResponseFifoPath)
@@ -18,7 +24,8 @@ def main():
 
   server = ServerTCP()
 
-  FifoRouter(controller, commandResponseFifoPath, inviteFifoPath)
+  fifoRouter = FifoRouter(controller, commandResponseFifoPath, inviteFifoPath)
+  fifoRouter.listenServer()
 
   client = Client(controller, server)
 
@@ -68,6 +75,8 @@ def main():
 
     elif command[0] == "out":
       client.logout()
+    else:
+      print("Insira um comando válido!")
 
     command = input("JogoDaVelha> ").split()
 

@@ -1,9 +1,14 @@
+from time import sleep
 from exceptions.UserNotFoundException import UserNotFoundException
 from exceptions.WrongPasswordException import WrongPasswordException
 from exceptions.UserAlreadyExists import UserAlreadyExists
 from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
 
 class GenericController:
+  def delayHeartbeat(self):
+    sleep(1)
+
+
   def processCommand(self, command, address):
 
     if command[0] == "new":
@@ -41,11 +46,8 @@ class GenericController:
     elif command[0] == "l":
       return str(self.server.showOnlinePlayers())
 
-    # elif command[0] == "call":
-    #   if (len(command) < 2):
-    #     print("Uso: call <opponent>")
-    #   else:
-    #     client.invitePlayer(command[1])
+    elif command[0] == "call":
+      self.server.invitePlayer(command[1], command[2])
 
     # elif command[0] == "play":
     #   if (len(command) < 3):
@@ -62,3 +64,7 @@ class GenericController:
     elif command[0] == "out":
       self.server.logout(command[1])
       return "OK"
+
+    elif command[0] == "heartbeat":
+      self.server.handleHeartbeat(address)
+      return "DONOTANSWER"

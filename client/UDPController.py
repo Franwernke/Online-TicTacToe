@@ -4,10 +4,12 @@ from socket import *
 ENCODING = 'utf-8'
 
 class UDPController:
-  def __init__(self, address, port) -> None:
+  def __init__(self, address, port, commandReponseFifoPath) -> None:
 
     self.sockfd = socket(AF_INET, SOCK_DGRAM)
     self.serverAddress = (address, int(port))
+
+    self.fifoPath = commandReponseFifoPath
 
   def sendMessage(self, messageStr):
     message = bytes(messageStr, ENCODING)

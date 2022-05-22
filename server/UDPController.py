@@ -9,12 +9,17 @@ class UDPController(GenericController):
     self.server = server
     self.listenfd = socket(AF_INET, SOCK_DGRAM)
     self.listenfd.bind((str(INADDR_ANY), port))
+    self.addresses = set()
   
   def acceptConnections(self):
     childpid = os.fork()
     if childpid == 0:
       while True:
         recvline = self.listenfd.recvfrom(4096)
+        if not recvline[1] in self.addresses:
+          self.addresses.add(recvline[1])
+          self.sendHeartbeats(recvline[1])
+
         self.resolveMessage(recvline[0].decode("utf-8"), recvline[1])
         print("Received from UDP: " + recvline[0].decode("utf-8"))
         sys.stdout.flush()
@@ -26,4 +31,14 @@ class UDPController(GenericController):
   def resolveMessage(self, message, address):
     command = message.split()
     responseString = self.processCommand(command, address)
-    self.sendMessage(responseString, address)
+
+    if responseString != "DONOTANSWER":
+      self.sendMessage(responseString, address)
+
+  def sendHeartbeats(self, address):
+    childPid = os.fork()
+    
+    if childPid == 0:
+      while True:
+        self.delayHeartbeat()
+        self.sendMessage("heartbeat", address)

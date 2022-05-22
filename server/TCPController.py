@@ -28,6 +28,8 @@ class TCPController(GenericController):
           self.listenfdTCP.close()
           self.address = address
 
+          self.sendHeartbeats(connfd)
+
           recvline = connfd.recv(4096)
           while recvline:
             self.resolveMessage(recvline.decode("utf-8"), connfd)
@@ -47,4 +49,14 @@ class TCPController(GenericController):
   def resolveMessage(self, message: str, connfd: socket):
     command = message.split()
     responseString = self.processCommand(command, self.address)
-    self.sendMessage(responseString, connfd)
+
+    if responseString != "DONOTANSWER":
+      self.sendMessage(responseString, connfd)
+
+  def sendHeartbeats(self, connfd):
+    childPid = os.fork()
+    
+    if childPid == 0:
+      while True:
+        self.delayHeartbeat()
+        self.sendMessage("heartbeat", connfd)

@@ -31,7 +31,16 @@ class Server:
   def showOnlinePlayers(self):
     return self.repository.getOnlinePlayers()
 
+  def invitePlayer(self, invitingUser, invitedUser):
+    try:
+      pass
+    except:
+      pass
+  
   def logout(self, username):
     self.repository.removeOnlinePlayer(username)
+  
+  def handleHeartbeat(self, address):
+    print(address, " está bem!")
 
 
