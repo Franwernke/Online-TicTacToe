@@ -1,16 +1,24 @@
+import os
 import sys
+from FifoRouter import FifoRouter
 from serverTCP import ServerTCP
 from TCPController import TCPController
 from UDPController import UDPController
 from client import Client
 
+
 def main():
+  commandResponseFifoPath = '/tmp/ep2/client/' + str(os.getpgid()) + '/FIFOs/command'
+  inviteFifoPath = '/tmp/ep2/client/' + str(os.getpgid()) + '/FIFOs/invite'
+
   if sys.argv[3] == "tcp":
-    controller = TCPController(sys.argv[1], sys.argv[2])
+    controller = TCPController(sys.argv[1], sys.argv[2], commandResponseFifoPath)
   else:
-    controller = UDPController(sys.argv[1], sys.argv[2])
+    controller = UDPController(sys.argv[1], sys.argv[2], commandResponseFifoPath)
 
   server = ServerTCP()
+
+  FifoRouter(controller, commandResponseFifoPath, inviteFifoPath)
 
   client = Client(controller, server)
 
