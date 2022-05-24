@@ -25,9 +25,15 @@ Client UDP (2 sockets):
 client1 client2 servidor
 História:
   client1 -call-> servidor (call <invintingUser> <invitedUser> no caso o username do client2)
-  servidor -call-> client2 (call <invintingUser> <invitedUser>) (servidor se comunica com FIFO do cliente no TCP e IP/Porta do cliente no UDP)
-  client2 -accept-> servidor (accept <invintingUser> <invitedUser> no caso o username do client1) 
-                             (servidor se comunica com o processo do client1 via FIFO)
-  servidor -OK-> client2 (start <X/O>)
-  servidor -OK-> client1 (start <X/O> <IP> <Porta>) (Servidor passa IPPorta do client2 para o client1)
-  client1 -Letsgo-> client2
+  servidor -OK-> client1 (OK <ip> <port>)
+  (IMPLEMENTADO)
+
+
+  client1 -invite-> client2 (invite <invintingUser>)
+  client2 -accept-> client1 (accept)
+
+  client1 -startgame-> server (startgame <invintingUser> <invitedUser>) (bobinho de ser implementado)
+  servidor -OK-> client1
+
+  clientWinner -won-> server (won <winnerUser> <loserUser>) (bobinho de ser implementado)
+  servidor -OK-> clientWinner

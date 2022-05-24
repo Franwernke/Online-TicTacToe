@@ -3,6 +3,8 @@ from exceptions.UserNotFoundException import UserNotFoundException
 from exceptions.WrongPasswordException import WrongPasswordException
 from exceptions.UserAlreadyExists import UserAlreadyExists
 from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
+from exceptions.UserIsAlreadyInGame import UserIsAlreadyInGame
+from exceptions.UserIsNotAvailable import UserIsNotAvailable
 
 class GenericController:
   def delayHeartbeat(self):
@@ -45,7 +47,14 @@ class GenericController:
       return str(self.server.showOnlinePlayers())
 
     elif command[0] == "call":
-      self.server.invitePlayer(command[1], command[2])
+      try:
+        userSession = self.server.invitePlayer(command[1], command[2])
+        return "OK " + userSession.ip + " " + userSession.port 
+      except UserIsAlreadyInGame as e:
+        return e.message
+      except UserIsNotAvailable as e:
+        return e.message
+      
 
     # elif command[0] == "play":
     #   if (len(command) < 3):

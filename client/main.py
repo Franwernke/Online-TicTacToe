@@ -17,19 +17,18 @@ def main():
   os.makedirs(BASEPATH + str(os.getpid()) + '/FIFOs/')
 
   commandResponseFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/command'
-  inviteFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/invite'
 
   if sys.argv[3] == "tcp":
-    controller = TCPController(sys.argv[1], sys.argv[2], commandResponseFifoPath)
+    serverController = TCPController(sys.argv[1], sys.argv[2])
   else:
-    controller = UDPController(sys.argv[1], sys.argv[2], commandResponseFifoPath)
+    serverController = UDPController(sys.argv[1], sys.argv[2])
 
-  server = ServerTCP()
+  serverPeerToPeer = ServerTCP()
 
-  fifoRouter = FifoRouter(controller, commandResponseFifoPath, inviteFifoPath)
+  fifoRouter = FifoRouter(serverController, commandResponseFifoPath)
   fifoRouter.listenServer()
 
-  client = Client(controller, server)
+  client = Client(serverController, serverPeerToPeer, fifoRouter)
 
   atexit.register(cleanup)
 
@@ -51,7 +50,7 @@ def main():
       if (len(command) < 3):
         print("Uso: in <username> <password>")
       else:
-        client.loginUser(command[1], command[2], str(server.getPort()))
+        client.loginUser(command[1], command[2], str(serverPeerToPeer.getPort()))
 
     elif command[0] == "halloffame":
       client.showHallOfFame()

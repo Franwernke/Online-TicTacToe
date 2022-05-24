@@ -1,3 +1,6 @@
+from TCPController import TCPController
+
+
 class InitialState():
   def createNewUser(self, client, user, password):
     response = client.sendMessage("new " + user + " " + password)
@@ -68,16 +71,15 @@ class LoggedIn():
     print(response)
 
   def invitePlayer(self, client, opponent):
-    response = client.sendMessage("call " + client.user + " " + opponent).split()
-    if response[0] == "BUSY":
-      print("O usuário convidado está ocupado!")
-    elif response[0] == "OFFLINE":
-      print("O usuário convidado está desconectado!")
-    elif response[1] == "X":
-      client.changeState(MyTurn())
+    responseStr = client.sendMessage("call " + client.user + " " + opponent)
+    response = responseStr.split()
+
+    if response[0] == "OK":
+      TCPController(response[1], response[2])
+      print("Deu certo")
     else:
-      client.changeState(HisTurn())
-    return response
+      print(responseStr)
+    
 
   def sendMove(self, client, line, column):
     print("Você não está jogando!!!")

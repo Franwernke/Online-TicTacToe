@@ -1,13 +1,11 @@
 import os
 
 class FifoRouter:
-  def __init__(self, controller, commandResponseFifoPath, inviteFifoPath):
+  def __init__(self, controller, commandResponseFifoPath):
     self.controller = controller
     self.commandResponseFifoPath = commandResponseFifoPath
-    self.inviteFifoPath = inviteFifoPath
 
     os.mkfifo(commandResponseFifoPath, 0o777)
-    os.mkfifo(inviteFifoPath, 0o777)
   
   def listenServer(self):
     childPid = os.fork()
@@ -17,16 +15,14 @@ class FifoRouter:
         command = message.split()[0]
         
         if command == 'heartbeat':
-          self.controller.answerHeartbeat()
+          self.controller.sendMessage(command)
         else:
-          if command == 'invite':
-            fifoFd = open(self.inviteFifoPath, "w")
-          else:
-            fifoFd = open(self.commandResponseFifoPath, "w")
-        
+          fifoFd = open(self.commandResponseFifoPath, "w")
           fifoFd.write(message)
           fifoFd.close()
 
-
-
-
+  def readCommand(self):
+    fifoFd = open(self.commandResponseFifoPath, "r")
+    message = fifoFd.read()
+    fifoFd.close()
+    return message

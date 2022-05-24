@@ -1,6 +1,7 @@
 from socket import *
 from repository import Repository
 from exceptions.WrongPasswordException import WrongPasswordException
+from exceptions.UserIsAlreadyInGame import UserIsAlreadyInGame
 
 class Server:
   def __init__(self, repository: Repository):
@@ -32,10 +33,11 @@ class Server:
     return self.repository.listOnlinePlayers()
 
   def invitePlayer(self, invitingUser, invitedUser):
-    try:
-      self.repository.getOnlinePlayer()
-    except:
-      pass
+    userSession = self.repository.getOnlinePlayer(invitedUser)
+
+    if userSession.availability == "emJogo":
+      raise UserIsAlreadyInGame
+    return userSession
   
   def logout(self, username):
     self.repository.removeOnlinePlayer(username)

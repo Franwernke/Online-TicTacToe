@@ -8,7 +8,7 @@ class ServerTCP:
     self.listenfdTCP.bind((str(INADDR_ANY), 0))
     self.listenfdTCP.listen(1)
 
-  def acceptConnections(self):
+  def receiveInvitations(self):
     childpid = os.fork()
     if childpid == 0:
       while True:

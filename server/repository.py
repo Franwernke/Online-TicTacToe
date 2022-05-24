@@ -4,6 +4,8 @@ from User import User
 from exceptions.UserNotFoundException import UserNotFoundException
 from exceptions.UserAlreadyExists import UserAlreadyExists
 from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
+from exceptions.UserIsNotAvailable import UserIsNotAvailable
+from UserSession import UserSession
 
 BASEPATH = "/tmp/ep2/"
 USERPATH = "users/"
@@ -67,6 +69,16 @@ class Repository:
       onlinePlayers.append((user, userData[3]))
 
     return onlinePlayers
+
+  def getOnlinePlayer(self, user):
+    userSession = dict()
+    if os.path.exists(BASEPATH + "online/" + user):
+      file = open(BASEPATH + "online/" + user)
+      userData = file.read().split()
+      userSession = UserSession(user, userData[1], userData[2], userData[3])
+      return userSession
+    else:
+      raise UserIsNotAvailable
 
   def removeOnlinePlayer(self, user):
     os.remove(BASEPATH + "online/" + user)
