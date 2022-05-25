@@ -78,6 +78,10 @@ def main():
 
     elif command[0] == "out":
       client.logout()
+    elif command[0] == "accept":
+      client.acceptGame(command[1])
+    elif command[0] == "refuse":
+      client.refuseGame(command[1])
     else:
       print("Insira um comando válido!")
 

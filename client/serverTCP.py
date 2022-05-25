@@ -2,6 +2,8 @@ from socket import *
 import os
 import sys
 
+BASEPATH = '/tmp/ep2/client/'
+
 class ServerTCP:
   def __init__(self):
     self.listenfdTCP = socket(AF_INET, SOCK_STREAM)
@@ -18,15 +20,25 @@ class ServerTCP:
 
         childpid = os.fork()
         if (childpid == 0):
-          print("Um novo cliente se conectou!")
           self.listenfdTCP.close()
           self.address = address
 
           recvline = connfd.recv(4096)
+          invitationsPath = BASEPATH + 'FIFOs/invitations/'
+          os.makedirs(invitationsPath)
+          user = recvline.decode("utf-8").split()[1]
+          os.mkfifo(invitationsPath + user, 0o777)
+  
+          print("Novo convite:" + user)
+          sys.stdout.flush()
+
+          invitationFifo = open(invitationsPath + user, "r")
+          connfd.send(bytes(invitationFifo.read(), 'utf-8'))
+          invitationFifo.close()
+
+
+          recvline = connfd.recv(4096)
           while recvline:
-            self.resolveMessage(recvline.decode("utf-8"), connfd)
-            print("Received from TCP: " + recvline.decode("utf-8"))
-            sys.stdout.flush()
             recvline = connfd.recv(4096)
           connfd.close()
           print("O cliente foi desconectado!")

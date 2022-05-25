@@ -17,3 +17,6 @@ class TCPController:
 
   def recvMessage(self):
     return self.sockfd.recv(4096).decode(ENCODING)
+
+  def closeSocket(self):
+    self.sockfd.close()

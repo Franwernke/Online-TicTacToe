@@ -46,6 +46,12 @@ class Client:
   def logout(self):
     self.state.logout(self)
 
+  def acceptGame(self, user):
+    self.state.acceptGame(user)
+
+  def refuseGame(self, user):
+    self.state.refuseGame(user)
+
   def sendMessage(self, message):
     self.controller.sendMessage(message)
     return self.fifo.readCommand()

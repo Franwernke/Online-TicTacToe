@@ -1,5 +1,7 @@
 from TCPController import TCPController
+import os
 
+BASEPATH = '/tmp/ep2/client/'
 
 class InitialState():
   def createNewUser(self, client, user, password):
@@ -46,6 +48,13 @@ class InitialState():
   def logout(self, client):
     print("Você precisa estar logado!!!")
 
+  def acceptGame(self, user):
+    print("Você precisa estar logado!!!")
+
+  def refuseGame(self, user):
+    print("Você precisa estar logado!!!")
+
+
 
 class LoggedIn():
   def createNewUser(self, client, user, password):
@@ -75,10 +84,31 @@ class LoggedIn():
     response = responseStr.split()
 
     if response[0] == "OK":
-      TCPController(response[1], response[2])
-      print("Deu certo")
+      client.opponentConnection = TCPController(response[1], response[2])
+      client.opponentConnection.sendMessage("invite " + client.user)
+      answer = client.opponentConnection.recvMessage()
+      print(answer)
     else:
       print(responseStr)
+
+  def acceptGame(self, user):
+    invitationsPath = BASEPATH + 'FIFOs/invitations/'
+    if os.path.exists(invitationsPath + user):
+      invitationFifo = open(invitationsPath + user, "w")
+      invitationFifo.write("accept")
+      invitationFifo.close()
+    else:
+      print("Este usuário não te convidou!")
+      
+
+  def refuseGame(self, user):
+    invitationsPath = BASEPATH + 'FIFOs/invitations/'
+    if os.path.exists(invitationsPath + user):
+      invitationFifo = open(invitationsPath + user, "w")
+      invitationFifo.write("refuse")
+      invitationFifo.close()
+    else:  
+      print("Este usuário não te convidou!")
     
 
   def sendMove(self, client, line, column):
@@ -133,6 +163,12 @@ class MyTurn():
   def logout(self, client):
     print("Saia do jogo antes de deslogar!!!")
 
+  def acceptGame(self, user):
+    print("Saia do jogo atual antes de aceitar outro!!!")
+
+  def refuseGame(self, user):
+    print("Você precisa sair do jogo antes!!!")
+
 class HisTurn():
   def createNewUser(self, *args):
     print("Espere a partida acabar para realizar esta ação")
@@ -165,3 +201,9 @@ class HisTurn():
 
   def logout(self, client):
     print("Saia do jogo antes de deslogar!!!")
+
+  def acceptGame(self, user):
+    print("Saia do jogo atual antes de aceitar outro!!!")
+
+  def refuseGame(self, user):
+    print("Você precisa sair do jogo antes!!!")
