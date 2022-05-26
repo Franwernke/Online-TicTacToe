@@ -1,7 +1,8 @@
 import os
+from TransportLayer import TransportLayer
 
 class FifoRouter:
-  def __init__(self, controller, commandResponseFifoPath):
+  def __init__(self, controller: TransportLayer, commandResponseFifoPath):
     self.controller = controller
     self.commandResponseFifoPath = commandResponseFifoPath
 
