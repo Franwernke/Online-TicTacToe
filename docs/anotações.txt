@@ -23,6 +23,7 @@ Client UDP (2 sockets):
     - receber comandos de partida (out)
 
 client1 client2 servidor
+
 História:
   client1 -call-> servidor (call <invintingUser> <invitedUser> no caso o username do client2)
   servidor -OK-> client1 (OK <ip> <port>)
@@ -34,6 +35,35 @@ História:
   client1 -startgame-> server (startgame <invintingUser> <invitedUser>) (bobinho de ser implementado)
   servidor -OK-> client1
   (IMPLEMENTADO)
+  ----------------------------------------------------------------------------------
+  Fluxo do jogo play pra um lado, play pro outro
+  over
+  latencia
+  ---------------------------------------------------------------------------------------
 
   clientWinner -won-> server (won <winnerUser> <loserUser>) (bobinho de ser implementado)
   servidor -OK-> clientWinner
+
+  clientWinner -draw-> server (draw <firstUser> <secondUser>) (bobinho de ser implementado)
+  servidor -OK-> clientWinner
+
+  clientWinner -over-> server (over <firstUser> <secondUser>) (bobinho de ser implementado)
+  servidor -OK-> clientWinner
+ --------------------------------------
+ • Servidor iniciado (Informando se a última execução dele foi finalizada com sucesso ou se houve
+uma falha. Caso houve falha, e se havia alguma partida em execução, ele deve retomar o “controle”
+dessa partida passando a enviar os heartbeats para os clientes, caso eles ainda estejam conectados
+entre eles) (????)
+• Conexão realizada por um cliente (Endereço IP do cliente); (easy)
+• Login com sucesso ou não (Nome do usuário que conseguiu, ou não, logar, e endereço IP de onde
+veio o login); (easy)
+• Desconexão realizada por um cliente (Endereço IP do cliente); (easy)
+• Inı́cio de uma partida (Endereço IP e nomes dos usuários dos jogadores); (easy)
+• Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (easy)
+• Desconexão inesperada de um cliente, verificada pelos heartbeats (Endereço IP do cliente); (???)
+• Servidor finalizado (?????)
+
+
+ --------------------------------------------------------------
+
+
