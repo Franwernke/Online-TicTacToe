@@ -1,4 +1,5 @@
-from client import ClientDomain
+from Client import ClientDomain
+from clientStates import MyTurn
 
 class InputController:
   def __init__(self, client: ClientDomain) -> None:
@@ -37,10 +38,10 @@ class InputController:
         self.client.invitePlayer(command[1])
 
     elif command[0] == "play":
-      if (len(command) < 3):
+      if (type(self.client.getState()) == MyTurn) and len(command) < 3:
         print("Uso: play <linha> <coluna>")
       else:
-        self.client.sendMove(command[1], command[2])
+        self.client.sendMove(int(command[1]), int(command[2]))
 
     elif command[0] == "delay":
       self.client.showLatency()

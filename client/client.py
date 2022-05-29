@@ -18,6 +18,9 @@ class ClientDomain:
   def changeState(self, newState):
     self.state = newState
 
+  def getState(self):
+    return self.state
+
   def createNewUser(self, user, password):
     self.state.createNewUser(user, password)
 

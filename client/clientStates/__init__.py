@@ -1,4 +1,5 @@
 from random import Random, randint, random
+import re
 from TCPLayer import TCPLayer
 from Game import Game
 
@@ -101,7 +102,6 @@ class LoggedIn(State):
         print("O oponente aceitou o convite!")
         response = self.client.sendMessage("startgame " + self.client.user + " " + opponent)
         game = Game(myTurn)
-        game.printBoard()
         self.client.changeState(HisTurn(self.client, game) if myTurn == "O" else MyTurn(self.client, game))
       else:
         print("O oponente não aceitou o convite.")
@@ -125,8 +125,8 @@ class LoggedIn(State):
       print("Você aceitou a partida!")
       self.invitingUser = None
       game = Game(opponentTurn)
-      game.printBoard()
       self.client.changeState(HisTurn(self.client, game) if opponentTurn == "X" else MyTurn(self.client, game))
+      self.client.opponentConnection = self.client.peerToPeerServer
     else:
       print("Ninguém te convidou! Você está bem?")
 
@@ -160,6 +160,7 @@ class MyTurn(State):
   def __init__(self, client, game: Game):
     super().__init__(client)
     self.game = game
+    self.game.printBoard()
     print("Seu turno! Digite play <linha> <coluna> para jogar")
   
   def createNewUser(self, user, password):
@@ -183,7 +184,12 @@ class MyTurn(State):
     print("usuario {opponent} te passas a bufa, aceitas?")
 
   def sendMove(self, line, column):
-    print("Você não está jogando!!!")
+    if not self.game.checkValidPlay(line, column):
+      print("Insira uma jogada válida!")
+      return
+    self.game.markSpot(self.game.myToken, line, column)
+    self.client.opponentConnection.sendMessage("play " + str(line) + " " + str(column))
+    self.client.changeState(HisTurn(self.client, self.game))
 
   def showLatency(self):
     print("Você não está conectado a nenhum player!!!")
@@ -204,6 +210,7 @@ class HisTurn(State):
   def __init__(self, client, game: Game):
     super().__init__(client)
     self.game = game
+    self.game.printBoard()
     print("Turno dele! Espere a jogada do adversário")
   
   def createNewUser(self):
@@ -226,8 +233,9 @@ class HisTurn(State):
   def invitePlayer(self):
     print("usuario {opponent} te passas a bufa, aceitas?")
 
-  def sendMove(self):
-    print("Você não está jogando!!!")
+  def sendMove(self, line, column):
+    self.game.markSpot(self.game.hisToken, line, column)
+    self.client.changeState(MyTurn(self.client, self.game))
 
   def showLatency(self):
     print("Você não está conectado a nenhum player!!!")
