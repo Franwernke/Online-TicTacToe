@@ -32,7 +32,7 @@ class Game:
   
   def markSpot(self, token, posX, posY):
     if self.checkValidPlay(posX, posY):
-      self.board[posX + posY*3] = 1 if token == "X" else "O"
+      self.board[posX + posY*3] = 1 if token == "X" else 2
 
   def didHeWin(self, playX, playY):
     curPosX = playX
