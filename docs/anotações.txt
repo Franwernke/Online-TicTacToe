@@ -26,14 +26,14 @@ client1 client2 servidor
 História:
   client1 -call-> servidor (call <invintingUser> <invitedUser> no caso o username do client2)
   servidor -OK-> client1 (OK <ip> <port>)
-  (IMPLEMENTADO)
-
 
   client1 -invite-> client2 (invite <invintingUser>)
   client2 -accept-> client1 (accept)
+  
 
   client1 -startgame-> server (startgame <invintingUser> <invitedUser>) (bobinho de ser implementado)
   servidor -OK-> client1
+  (IMPLEMENTADO)
 
   clientWinner -won-> server (won <winnerUser> <loserUser>) (bobinho de ser implementado)
   servidor -OK-> clientWinner

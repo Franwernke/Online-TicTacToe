@@ -10,7 +10,7 @@ from serverTCP import ServerTCP
 from TCPLayer import TCPLayer
 from UDPLayer import UDPLayer
 from TransportLayer import TransportLayer
-from Client import ClientDomain
+from client import ClientDomain
 
 BASEPATH = '/tmp/ep2/client/'
 

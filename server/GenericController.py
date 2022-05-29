@@ -71,6 +71,10 @@ class GenericController:
     elif command[0] == "out":
       self.server.logout(command[1])
       return "OK"
+    
+    elif command[0] == "startgame":
+      self.server.startgame(command[1], command[2])
+      return "OK"
 
     elif command[0] == "heartbeat":
       self.server.handleHeartbeat(address)

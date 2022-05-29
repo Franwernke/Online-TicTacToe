@@ -82,3 +82,13 @@ class Repository:
 
   def removeOnlinePlayer(self, user):
     os.remove(BASEPATH + "online/" + user)
+
+  def changeStatus(self, user, status):
+    file = open(BASEPATH + "online/" + user, "r")
+    data = file.read().split()
+    file.close()
+    data[3] = status
+
+    file = open(BASEPATH + "online/" + user, "w")
+    file.write(" ".join(data))
+    file.close()

@@ -1,4 +1,4 @@
-from Client import ClientDomain
+from client import ClientDomain
 
 class InputController:
   def __init__(self, client: ClientDomain) -> None:

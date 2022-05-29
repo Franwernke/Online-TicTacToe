@@ -94,9 +94,18 @@ class LoggedIn(State):
       self.client.opponentConnection = TCPLayer(response[1], response[2])
       self.client.opponentConnection.sendMessage("invite " + self.client.user)
       print("Esperando resposta do convite...")
-      answer = self.client.opponentConnection.recvMessage()
-      print(answer)
-      # input("O usuário " + response[] + " te enviou um convite. Deseja jogar? [y|n]")
+      answer = self.client.opponentConnection.recvMessage().split()
+      
+      if answer[0] == "accept":
+        myTurn = answer[2]
+        print("O oponente aceitou o convite!")
+        response = self.client.sendMessage("startgame " + self.client.user + " " + opponent)
+        game = Game(myTurn)
+        game.printBoard()
+        self.client.changeState(HisTurn(self.client, game) if myTurn == "O" else MyTurn(self.client, game))
+      else:
+        print("O oponente não aceitou o convite.")
+      
     else:
       print(responseStr)
 
@@ -110,18 +119,23 @@ class LoggedIn(State):
     return "O" if coin == 0 else "X"
 
   def acceptGame(self):
-    turn = self.decideTurn()
-    self.client.peerToPeerServer.sendMessage("accept " + self.invitingUser + " " + turn)
-    print("Você aceitou a partida!")
-    self.invitingUser = None
-    game = Game(turn)
-    if turn == "O":
+    if self.invitingUser:
+      opponentTurn = self.decideTurn()
+      self.client.peerToPeerServer.sendMessage("accept " + self.invitingUser + " " + opponentTurn)
+      print("Você aceitou a partida!")
+      self.invitingUser = None
+      game = Game(opponentTurn)
       game.printBoard()
-    self.client.changeState(HisTurn(self.client, game) if turn == "X" else MyTurn(self.client, game))
+      self.client.changeState(HisTurn(self.client, game) if opponentTurn == "X" else MyTurn(self.client, game))
+    else:
+      print("Ninguém te convidou! Você está bem?")
 
   def refuseGame(self):
-    self.client.peerToPeerServer.sendMessage("refuse " + self.invitingUser)
-    self.invitingUser = None
+    if self.invitingUser:
+      self.client.peerToPeerServer.sendMessage("refuse " + self.invitingUser)
+      self.invitingUser = None
+    else:
+      print("Ninguém te convidou! Você está bem?")
 
   def sendMove(self, line, column):
     print("Você não está jogando!!!")

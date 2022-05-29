@@ -45,4 +45,7 @@ class Server:
   def handleHeartbeat(self, address):
     print(address, " está bem!")
 
+  def startgame(self, invitingUser, invitedUser):
+    self.repository.changeStatus(invitingUser, "ocupado")
+    self.repository.changeStatus(invitedUser, "ocupado")
 
