@@ -44,7 +44,7 @@ def main():
   router = InputController(client)
 
   command = input("JogoDaVelha> ")
-  while command[0] != 'bye':
+  while command != 'bye':
     router.route(command)
     command = input("JogoDaVelha> ")
 

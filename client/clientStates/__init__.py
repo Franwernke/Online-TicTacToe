@@ -1,5 +1,6 @@
 from random import Random, randint, random
 from TCPLayer import TCPLayer
+from Game import Game
 
 BASEPATH = '/tmp/ep2/client/'
 
@@ -106,14 +107,17 @@ class LoggedIn(State):
   
   def decideTurn(self):
     coin = randint(0, 1)
-    return (MyTurn(self.client), "O") if coin == 0 else (HisTurn(self.client), "X")
+    return "O" if coin == 0 else "X"
 
   def acceptGame(self):
     turn = self.decideTurn()
-    self.client.peerToPeerServer.sendMessage("accept " + self.invitingUser + " " + turn[1])
+    self.client.peerToPeerServer.sendMessage("accept " + self.invitingUser + " " + turn)
     print("Você aceitou a partida!")
     self.invitingUser = None
-    self.client.changeState(turn[0])
+    game = Game(turn)
+    if turn == "O":
+      game.printBoard()
+    self.client.changeState(HisTurn(self.client, game) if turn == "X" else MyTurn(self.client, game))
 
   def refuseGame(self):
     self.client.peerToPeerServer.sendMessage("refuse " + self.invitingUser)
@@ -139,8 +143,9 @@ class LoggedIn(State):
       print(response)
 
 class MyTurn(State):
-  def __init__(self, client):
+  def __init__(self, client, game: Game):
     super().__init__(client)
+    self.game = game
     print("Seu turno! Digite play <linha> <coluna> para jogar")
   
   def createNewUser(self, user, password):
@@ -182,8 +187,9 @@ class MyTurn(State):
     print("Você precisa sair do jogo antes!!!")
 
 class HisTurn(State):
-  def __init__(self, client):
+  def __init__(self, client, game: Game):
     super().__init__(client)
+    self.game = game
     print("Turno dele! Espere a jogada do adversário")
   
   def createNewUser(self):
