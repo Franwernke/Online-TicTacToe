@@ -41,14 +41,16 @@ História:
   latencia
   ---------------------------------------------------------------------------------------
 
-  clientWinner -won-> server (won <winnerUser> <loserUser>) (bobinho de ser implementado)
+  clientWinner -won-> server (won <winnerUser> <loserUser>)
   servidor -OK-> clientWinner
 
-  clientWinner -draw-> server (draw <firstUser> <secondUser>) (bobinho de ser implementado)
+  clientWinner -draw-> server (draw <firstUser> <secondUser>)
   servidor -OK-> clientWinner
 
-  clientWinner -over-> server (over <firstUser> <secondUser>) (bobinho de ser implementado)
+  clientWinner -over-> server (over <firstUser> <secondUser>)
   servidor -OK-> clientWinner
+
+  (IMPLEMENTADO, mas não testado)
  --------------------------------------
  • Servidor iniciado (Informando se a última execução dele foi finalizada com sucesso ou se houve
 uma falha. Caso houve falha, e se havia alguma partida em execução, ele deve retomar o “controle”
