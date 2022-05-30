@@ -3,10 +3,13 @@ import sys
 import os
 from server import Server
 from GenericController import GenericController
+from log import Log
 
 class TCPController(GenericController):
-  def __init__(self, port: int, server: Server):
+  def __init__(self, port: int, server: Server, log: Log):
     self.server = server
+    self.log = log
+
     self.listenfdTCP = socket(AF_INET, SOCK_STREAM)
     self.listenfdTCP.bind((str(INADDR_ANY), port))
     self.listenfdTCP.listen(1)
