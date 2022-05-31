@@ -1,22 +1,22 @@
 #!/bin/python3
 from socket import *
-from TransportLayer import TransportLayer
+
+from transportLayer.TransportLayer import TransportLayer
 
 ENCODING = 'utf-8'
 
-class TCPLayer(TransportLayer):
+class UDPLayer(TransportLayer):
   def __init__(self, address, port) -> None:
-    self.sockfd = socket(AF_INET, SOCK_STREAM)
+    self.sockfd = socket(AF_INET, SOCK_DGRAM)
     self.serverAddress = (address, int(port))
-
-    self.sockfd.connect(self.serverAddress)
 
   def sendMessage(self, messageStr):
     message = bytes(messageStr, ENCODING)
-    self.sockfd.send(message)
+    self.sockfd.sendto(message, self.serverAddress)
 
   def recvMessage(self):
-    return self.sockfd.recv(4096).decode(ENCODING)
+    message = self.sockfd.recvfrom(4096)[0].decode(ENCODING)
+    return message
 
   def closeSocket(self):
     self.sockfd.close()

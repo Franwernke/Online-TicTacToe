@@ -3,13 +3,15 @@ import os
 import shutil
 import signal
 import sys
-from FifoRouter import FifoRouter
-from InputController import InputController
-from OpponentCommands import OpponentCommands
-from serverTCP import ServerTCP
-from TCPLayer import TCPLayer
-from UDPLayer import UDPLayer
-from TransportLayer import TransportLayer
+from input.InputController import InputController
+from input.FeedbackController import FeedbackController
+from input.Controller import Controller
+from output.P2PRequester import P2PRequester
+from output.Requester import Requester
+from Router import Router
+from transportLayer.serverTCP import ServerTCP
+from transportLayer.TCPLayer import TCPLayer
+from transportLayer.UDPLayer import UDPLayer
 from Client import ClientDomain
 
 BASEPATH = '/tmp/ep2/client/'
@@ -21,33 +23,38 @@ def main():
     shutil.rmtree(BASEPATH + str(os.getpid()) + '/FIFOs/')
   os.makedirs(BASEPATH + str(os.getpid()) + '/FIFOs/')
 
-  commandResponseFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/command'
+  serverResponseFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/serverResponseFifo'
+  peerToPeerResponseFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/peerToPeerResponseFifo'
+  latencyResponseFifoPath = BASEPATH + str(os.getpid()) + '/FIFOs/latencyResponseFifo'
 
+  # 1
   if sys.argv[3] == "tcp":
-    serverController = TCPLayer(sys.argv[1], sys.argv[2])
+    serverTransportLayer = TCPLayer(address=sys.argv[1], port=sys.argv[2])
   else:
-    serverController = UDPLayer(sys.argv[1], sys.argv[2])
+    serverTransportLayer = UDPLayer(sys.argv[1], sys.argv[2])
 
-  fifoRouter = FifoRouter(serverController, commandResponseFifoPath)
-  fifoRouter.listenServer()
+  peerToPeerTransportLayer = ServerTCP()
+  feedBackController = FeedbackController(serverResponseFifoPath, peerToPeerResponseFifoPath, latencyResponseFifoPath)
 
-  client = ClientDomain(fifoRouter)
+  # 2
+  serverOutput = Requester(serverTransportLayer)
+  peerToPeerOutput = P2PRequester(peerToPeerTransportLayer)
 
-  commandHandler = OpponentCommands(client)
+  # 3
+  client = ClientDomain(serverOutput, peerToPeerOutput, feedBackController)
+  
+  # 4
+  router = Router(client, feedBackController)
 
-  peerToPeerServer = ServerTCP(commandHandler)
+  # 5
+  serverController = Controller(serverTransportLayer, router, 'Thread Controller do servidor')
+  serverController.listen()
 
-  client.peerToPeerServer = peerToPeerServer
+  peerToPeerController = Controller(peerToPeerTransportLayer, router, 'Thread Controller do PeerToPeer')
+  peerToPeerController.listen()
 
-  client.serverController = serverController
-
-  router = InputController(client)
-
-  command = input("JogoDaVelha> ")
-  while command != 'bye':
-    router.route(command)
-    command = input("JogoDaVelha> ")
-
+  inputController = InputController(router)
+  inputController.listenToKeyboard()
   sys.exit()
 
 def cleanup():

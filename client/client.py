@@ -1,19 +1,20 @@
 #!/bin/python3
 
-from TransportLayer import TransportLayer
-from FifoRouter import FifoRouter
-from serverTCP import ServerTCP
+from entities.ClientDomainI import ClientDomainI
+from input.FeedbackController import FeedbackController, FifoChoice
+from output.P2PRequester import P2PRequester
+from output.Requester import Requester
 from clientStates import State
 from socket import *
 
 ENCODING = 'utf-8'
 
-class ClientDomain:
-  def __init__(self, fifo) -> None:
+class ClientDomain(ClientDomainI):
+  def __init__(self, serverOutput: Requester, peerToPeerOutput: P2PRequester, feedbackController: FeedbackController) -> None:
     self.state = State.initialState(self)
-    self.fifo: FifoRouter = fifo
-    self.peerToPeerServer: ServerTCP = None
-    self.serverController: TransportLayer = None
+    self.serverOutput = serverOutput
+    self.peerToPeerOutput = peerToPeerOutput
+    self.feedbackController = feedbackController
 
   def changeState(self, newState):
     self.state = newState
@@ -60,6 +61,19 @@ class ClientDomain:
   def refuseGame(self):
     self.state.refuseGame()
 
-  def sendMessage(self, message):
-    self.serverController.sendMessage(message)
-    return self.fifo.readCommand()
+  def sendHeartbeat(self):
+    self.serverOutput.sendMessage("heartbeat")
+
+  def sendMessageToServer(self, message):
+    self.serverOutput.sendMessage(message)
+    return self.feedbackController.recvResponse(FifoChoice.serverResponse)
+
+  def sendMessageToPeerToPeer(self, message):
+    self.peerToPeerOutput.sendMessage(message)
+    return self.feedbackController.recvResponse(FifoChoice.peerToPeerResponse)
+
+  def sendMessageToPeerToPeerNoResp(self, message) -> str:
+    self.peerToPeerOutput.sendMessage(message)
+
+  def createConnectionWithClient(self, address, port):
+    self.peerToPeerOutput.updateTransportLayer(address, port)

@@ -1,12 +1,12 @@
-from random import Random, randint, random
-import re
-from TCPLayer import TCPLayer
-from Game import Game
+from random import randint
+from entities.ClientDomainI import ClientDomainI
+from transportLayer.TCPLayer import TCPLayer
+from entities.Game import Game
 
 BASEPATH = '/tmp/ep2/client/'
 
 class State:
-  def __init__(self, client):
+  def __init__(self, client: ClientDomainI):
     self.client = client
     self.invitingUser: str = None
   
@@ -15,14 +15,14 @@ class State:
 
 class InitialState(State):
   def createNewUser(self, user, password):
-    response = self.client.sendMessage("new " + user + " " + password)
+    response = self.client.sendMessageToServer("new " + user + " " + password)
     if response == "OK":
       print("Usuário criado com sucesso!")
     else:
       print(response)
   
   def loginUser(self, user, password, port):
-    response = self.client.sendMessage("in " + user + " " + password + " " + port)
+    response = self.client.sendMessageToServer("in " + user + " " + password + " " + port)
     if response == "OK":
       print("Login efetuado com sucesso!")
       self.client.user = user
@@ -34,11 +34,11 @@ class InitialState(State):
     print("Você precisa logar antes de alterar a senha!!!")
 
   def showHallOfFame(self):
-    response = self.client.sendMessage("halloffame")
+    response = self.client.sendMessageToServer("halloffame")
     print(response)
   
   def showOnlinePlayers(self):
-    response = self.client.sendMessage("l")
+    response = self.client.sendMessageToServer("l")
     print(response)
 
   def invitePlayer(self, opponent):
@@ -72,7 +72,7 @@ class LoggedIn(State):
     print("Saia primeiro antes de logar em outra conta!!!")
 
   def changeUserPassword(self, oldPassword, newPassword):
-    response = self.client.sendMessage("pass " + self.client.user + " " + oldPassword + " " + newPassword)
+    response = self.client.sendMessageToServer("pass " + self.client.user + " " + oldPassword + " " + newPassword)
 
     if response == "OK":
       print("Alteração de senha efetuada com sucesso!")
@@ -80,27 +80,27 @@ class LoggedIn(State):
       print(response)
   
   def showHallOfFame(self):
-    response = self.client.sendMessage("halloffame")
+    response = self.client.sendMessageToServer("halloffame")
     print(response)
   
   def showOnlinePlayers(self):
-    response = self.client.sendMessage("l")
+    response = self.client.sendMessageToServer("l")
     print(response)
 
   def invitePlayer(self, opponent):
-    responseStr = self.client.sendMessage("call " + self.client.user + " " + opponent)
+    responseStr = self.client.sendMessageToServer("call " + self.client.user + " " + opponent)
     response = responseStr.split()
 
     if response[0] == "OK":
-      self.client.opponentConnection = TCPLayer(response[1], response[2])
-      self.client.opponentConnection.sendMessage("invite " + self.client.user)
+      self.client.createConnectionWithClient(response[1], response[2])
+      responseStr = self.client.sendMessageToPeerToPeer("invite " + self.client.user)
       print("Esperando resposta do convite...")
-      answer = self.client.opponentConnection.recvMessage().split()
-      
-      if answer[0] == "accept":
-        myTurn = answer[2]
+      response = responseStr.split()
+
+      if response[0] == "accept":
+        myTurn = response[2]
         print("O oponente aceitou o convite!")
-        response = self.client.sendMessage("startgame " + self.client.user + " " + opponent)
+        response = self.client.sendMessageToServer("startgame " + self.client.user + " " + opponent)
         game = Game(myTurn)
         self.client.changeState(HisTurn(self.client, game) if myTurn == "O" else MyTurn(self.client, game))
       else:
@@ -113,7 +113,7 @@ class LoggedIn(State):
     print("Você recebeu um convite de " + invitingUser + ", deseja jogar?")
     print("Digite \"accept\" para aceitar e \"refuse\" para recusar")
     self.invitingUser = invitingUser
-  
+
   def decideTurn(self):
     coin = randint(0, 1)
     return "O" if coin == 0 else "X"
@@ -121,18 +121,17 @@ class LoggedIn(State):
   def acceptGame(self):
     if self.invitingUser:
       opponentTurn = self.decideTurn()
-      self.client.peerToPeerServer.sendMessage("accept " + self.invitingUser + " " + opponentTurn)
+      self.client.sendMessageToPeerToPeerNoResp("P accept " + self.invitingUser + " " + opponentTurn)
       print("Você aceitou a partida!")
       self.invitingUser = None
       game = Game(opponentTurn)
       self.client.changeState(HisTurn(self.client, game) if opponentTurn == "X" else MyTurn(self.client, game))
-      self.client.opponentConnection = self.client.peerToPeerServer
     else:
       print("Ninguém te convidou! Você está bem?")
 
   def refuseGame(self):
     if self.invitingUser:
-      self.client.peerToPeerServer.sendMessage("refuse " + self.invitingUser)
+      self.client.sendMessageToPeerToPeer("P refuse " + self.invitingUser)
       self.invitingUser = None
     else:
       print("Ninguém te convidou! Você está bem?")
@@ -147,7 +146,7 @@ class LoggedIn(State):
     print("Você não está em nenhuma partida!!!")
 
   def logout(self):
-    response = self.client.sendMessage("out " + self.client.user)
+    response = self.client.sendMessageToServer("out " + self.client.user)
 
     if response == "OK":
       print("deslogado!")
@@ -173,11 +172,11 @@ class MyTurn(State):
     print("Senha antiga: ", oldPassword, "Senha atual: ", newPassword)
   
   def showHallOfFame(self):
-    response = self.client.sendMessage("halloffame")
+    response = self.client.sendMessageToServer("halloffame")
     print(response)
   
   def showOnlinePlayers(self):
-    response = self.client.sendMessage("l")
+    response = self.client.sendMessageToServer("l")
     print(response)
 
   def invitePlayer(self, opponent):
@@ -188,7 +187,7 @@ class MyTurn(State):
       print("Insira uma jogada válida!")
       return
     self.game.markSpot(self.game.myToken, line, column)
-    self.client.opponentConnection.sendMessage("play " + str(line) + " " + str(column))
+    self.client.sendMessageToPeerToPeer("play " + str(line) + " " + str(column))
     self.client.changeState(HisTurn(self.client, self.game))
 
   def showLatency(self):
@@ -223,11 +222,11 @@ class HisTurn(State):
     print("Senha antiga: ", oldPassword, "Senha atual: ", newPassword)
   
   def showHallOfFame(self):
-    response = self.client.sendMessage("halloffame")
+    response = self.client.sendMessageToServer("halloffame")
     print(response)
   
   def showOnlinePlayers(self):
-    response = self.client.sendMessage("l")
+    response = self.client.sendMessageToServer("l")
     print(response)
 
   def invitePlayer(self):
