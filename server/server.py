@@ -2,10 +2,12 @@ from socket import *
 from repository import Repository
 from exceptions.WrongPasswordException import WrongPasswordException
 from exceptions.UserIsAlreadyInGame import UserIsAlreadyInGame
+from log import Log
 
 class Server:
-  def __init__(self, repository: Repository):
+  def __init__(self, repository: Repository, log: Log):
     self.repository = repository
+    self.log = log
 
   def createNewUser(self, username, password):
     self.repository.createNewUser(username, password)
@@ -56,6 +58,12 @@ class Server:
     score = self.repository.getUserScore(winnerUser)
     self.repository.changeUserScore(winnerUser, score + 3)
 
+    firstIp = self.repository.getOnlinePlayer(winnerUser).ip
+
+    secondIp = self.repository.getOnlinePlayer(loserUser).ip
+
+    self.log.finishGame(winnerUser, loserUser, firstIp, secondIp, winnerUser)
+
   def drawGame(self, firstUser, secondUser):
     self.repository.changeStatus(firstUser, "livre")
     self.repository.changeStatus(secondUser, "livre")
@@ -66,8 +74,20 @@ class Server:
     score = self.repository.getUserScore(secondUser)
     self.repository.changeUserScore(secondUser, score + 1)
 
+    firstIp = self.repository.getOnlinePlayer(firstUser).ip
+
+    secondIp = self.repository.getOnlinePlayer(secondUser).ip
+
+    self.log.finishGame(firstUser, secondUser, firstIp, secondIp, "Ninguém")
+
   def endgame(self, firstUser, secondUser):
     self.repository.changeStatus(firstUser, "livre")
     self.repository.changeStatus(secondUser, "livre")
+
+    firstIp = self.repository.getOnlinePlayer(firstUser).ip
+
+    secondIp = self.repository.getOnlinePlayer(secondUser).ip
+
+    self.log.finishGame(firstUser, secondUser, firstIp, secondIp, "Ninguém")
 
 

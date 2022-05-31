@@ -21,6 +21,7 @@ class UDPController(GenericController):
         recvline = self.listenfd.recvfrom(4096)
         if not recvline[1] in self.addresses:
           self.addresses.add(recvline[1])
+          self.log.newConnection(recvline[1][0])
           self.sendHeartbeats(recvline[1])
 
         self.resolveMessage(recvline[0].decode("utf-8"), recvline[1])
