@@ -3,10 +3,13 @@ from socket import *
 import sys
 from server import Server
 from GenericController import GenericController
+from log import Log
 
 class UDPController(GenericController):
-  def __init__(self, port, server: Server):
+  def __init__(self, port, server: Server, log: Log):
     self.server = server
+    self.log = log
+
     self.listenfd = socket(AF_INET, SOCK_DGRAM)
     self.listenfd.bind((str(INADDR_ANY), port))
     self.addresses = set()

@@ -39,6 +39,13 @@ class Repository:
   def changeUserScore(self, user, score):
     file = open(BASEPATH + "scores/" + user, "w")
     file.write(str(score))
+    file.close()
+
+  def getUserScore(self, user):
+    file = open(BASEPATH + "scores/" + user, "r")
+    score = int(file.read())
+    file.close()
+    return score
 
   def getUser(self, user):
     if os.path.exists(BASEPATH + USERPATH + user):

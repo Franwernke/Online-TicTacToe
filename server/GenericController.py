@@ -54,19 +54,6 @@ class GenericController:
         return "P " + e.message
       except UserIsNotAvailable as e:
         return "P " + e.message
-      
-
-    # elif command[0] == "play":
-    #   if (len(command) < 3):
-    #     print("Uso: play <linha> <coluna>")
-    #   else:
-    #     client.sendMove(command[1], command[2])
-
-    # elif command[0] == "delay":
-    #   client.showLatency()
-
-    # elif command[0] == "over":
-    #   client.endGame()
 
     elif command[0] == "out":
       self.server.logout(command[1])
@@ -75,6 +62,18 @@ class GenericController:
     elif command[0] == "startgame":
       self.server.startgame(command[1], command[2])
       return "P OK"
+
+    elif command[0] == "won":
+      self.server.setWinner(command[1], command[2])
+      return "OK"
+
+    elif command[0] == "draw":
+      self.server.drawGame(command[1], command[2])
+      return "OK"
+
+    elif command[0] == "over":
+      self.server.endgame(command[1], command[2])
+      return "OK"
 
     elif command[0] == "heartbeat":
       self.server.handleHeartbeat(address)

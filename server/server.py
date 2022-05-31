@@ -46,6 +46,28 @@ class Server:
     print(address, " está bem!")
 
   def startgame(self, invitingUser, invitedUser):
-    self.repository.changeStatus(invitingUser, "ocupado")
-    self.repository.changeStatus(invitedUser, "ocupado")
+    self.repository.changeStatus(invitingUser, "emJogo")
+    self.repository.changeStatus(invitedUser, "emJogo")
+
+  def setWinner(self, winnerUser, loserUser):
+    self.repository.changeStatus(winnerUser, "livre")
+    self.repository.changeStatus(loserUser, "livre")
+
+    score = self.repository.getUserScore(winnerUser)
+    self.repository.changeUserScore(winnerUser, score + 3)
+
+  def drawGame(self, firstUser, secondUser):
+    self.repository.changeStatus(firstUser, "livre")
+    self.repository.changeStatus(secondUser, "livre")
+
+    score = self.repository.getUserScore(firstUser)
+    self.repository.changeUserScore(firstUser, score + 1)
+
+    score = self.repository.getUserScore(secondUser)
+    self.repository.changeUserScore(secondUser, score + 1)
+
+  def endgame(self, firstUser, secondUser):
+    self.repository.changeStatus(firstUser, "livre")
+    self.repository.changeStatus(secondUser, "livre")
+
 
