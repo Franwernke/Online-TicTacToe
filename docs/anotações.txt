@@ -64,9 +64,9 @@ veio o login); (Implementado, mas sem testar)
 
 • Desconexão realizada por um cliente (Endereço IP do cliente);  (Implementado, mas sem testar, cliente precisa enviar um bye)
 
-• Inı́cio de uma partida (Endereço IP e nomes dos usuários dos jogadores); (easy)
+• Inı́cio de uma partida (Endereço IP e nomes dos usuários dos jogadores); (Implementado, mas sem testar)
 
-• Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (easy)
+• Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (Implementado, mas sem testar)
 
 • Desconexão inesperada de um cliente, verificada pelos heartbeats (Endereço IP do cliente); (???)
 
