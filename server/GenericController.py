@@ -5,12 +5,17 @@ from exceptions.UserAlreadyExists import UserAlreadyExists
 from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
 from exceptions.UserIsAlreadyInGame import UserIsAlreadyInGame
 from exceptions.UserIsNotAvailable import UserIsNotAvailable
+from log import Log
+from .server import Server
 
 class GenericController:
   def delayHeartbeat(self):
     sleep(10)
 
   def processCommand(self, command, address):
+    self.log: Log
+    self.server: Server
+
     if command[0] == "new":
       try:
         self.server.createNewUser(command[1], command[2])
@@ -30,12 +35,16 @@ class GenericController:
     elif command[0] == "in":
       try:
         self.server.loginUser(command[1], command[2], (address[0], command[3]))
+        self.log.newLogin(command[1], True, address[0])
         return "P OK"
       except UserNotFoundException as e:
+        self.log.newLogin(command[1], False, address[0])
         return "P " + e.message
       except WrongPasswordException as e:
+        self.log.newLogin(command[1], False, address[0])
         return "P " + e.message
       except UserAlreadyLoggedIn as e:
+        self.log.newLogin(command[1], False, address[0])
         return "P " + e.message
       except Exception as e:
         print(e)
@@ -65,16 +74,20 @@ class GenericController:
 
     elif command[0] == "won":
       self.server.setWinner(command[1], command[2])
-      return "OK"
+      return "P OK"
 
     elif command[0] == "draw":
       self.server.drawGame(command[1], command[2])
-      return "OK"
+      return "P OK"
 
     elif command[0] == "over":
       self.server.endgame(command[1], command[2])
-      return "OK"
+      return "P OK"
 
     elif command[0] == "heartbeat":
       self.server.handleHeartbeat(address)
+      return "DONOTANSWER"
+    
+    elif command[0] == "bye":
+      self.log.disconnect(address[0])
       return "DONOTANSWER"

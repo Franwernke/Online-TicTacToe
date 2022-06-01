@@ -27,6 +27,7 @@ class TCPController(GenericController):
 
         childpid = os.fork()
         if (childpid == 0):
+          self.log.newConnection(address[0])
           print("Um novo cliente se conectou!")
           self.listenfdTCP.close()
           self.address = address

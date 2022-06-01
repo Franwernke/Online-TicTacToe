@@ -15,7 +15,7 @@ def main():
   port = int(sys.argv[1])
   repository = Repository()
   log = Log()
-  server = Server(repository)
+  server = Server(repository, log)
   udpController = UDPController(port, server, log)
   udpController.acceptConnections()
   tcpController = TCPController(port, server, log)
