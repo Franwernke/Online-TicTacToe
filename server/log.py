@@ -33,13 +33,13 @@ class Log:
   def startgame(self, firstUser, secondUser, firstIp, secondIp):
     self.writeLogFile( 
       "Usuários " + firstUser + " e " + secondUser + 
-      "com IPs: " + str(firstIp) + " e " +  str(secondIp) 
+      " com IPs: " + str(firstIp) + " e " +  str(secondIp) 
       + " inciam um novo jogo.")
 
   def finishGame(self, firstUser, secondUser, firstIp, secondIp, winner):
     self.writeLogFile( 
       "Usuários " + firstUser + " e " + secondUser + 
-      "com IPs: " + str(firstIp) + " e " +  str(secondIp) 
+      " com IPs: " + str(firstIp) + " e " +  str(secondIp) 
       + " encerra o jogo. O ganhador foi: "+ winner)
 
   def unexpectedDisconnect(self, ip):

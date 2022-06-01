@@ -52,7 +52,6 @@ def main():
 
   inputController = InputController(router)
   inputController.listenToKeyboard()
-  print("Rapaz, esse é meu patrão")
 
 if __name__ == "__main__":
   main()

@@ -1,5 +1,6 @@
 from socket import *
 from threading import Thread, Lock
+from time import sleep
 
 from transportLayer.TCPLayer import TCPLayer
 from transportLayer.TransportLayer import TransportLayer
@@ -25,18 +26,21 @@ class ServerTCP(TransportLayer):
 
   def recvMessage(self):
     if self.tcpLayer:
-      return self.tcpLayer.recvMessage()
+      try:
+        return self.tcpLayer.recvMessage()
+      except:
+        return
+    else:
+      sleep(0.5)
 
   def closeSocket(self):
     self.listenfdTCP.close()
 
   def killConnection(self):
     try:
-      print("kill connection")
       self.tcpLayer.closeSocket()
       self.tcpLayer = None
       self.lock.release()
-      print("Release killconnection")
     except AttributeError:
       print("Você precisa ter uma conexão ativa para fechar a conexão")
   
@@ -44,17 +48,15 @@ class ServerTCP(TransportLayer):
     self.lock.acquire()
     self.tcpLayer = TCPLayer(connectedSocket=connectedSocket)
 
-  def transportLayerExists(self)-> bool:
-    print("Antes do acquire")
+  def updateTransportLayer(self, address, port):
     self.lock.acquire()
-    print("Depois do acquire")
+    self.tcpLayer = TCPLayer(address=address, port=port)
+
+  def transportLayerExists(self)-> bool:
+    self.lock.acquire()
     isThereTransportLayer = self.tcpLayer != None
     self.lock.release()
-    print("Release transportLayer")
     return isThereTransportLayer
-
-  def updateTransportLayer(self, address, port):
-    self.tcpLayer = TCPLayer(address=address, port=port)
 
   def getPort(self):
     return self.listenfdTCP.getsockname()[1]

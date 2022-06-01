@@ -1,4 +1,5 @@
 from Router import Router
+from clientStates import HisTurn
 
 class KeyboardCommands():
   validCommands = [
@@ -69,7 +70,9 @@ class InputController:
           self.router.route(commandStr)
 
       elif command[0] == KeyboardCommands.play:
-        if len(command) < 3:
+        if type(self.router.client.state) == HisTurn:
+          print("Não é a sua vez! Espere a jogada do adversário!")
+        elif len(command) < 3:
           print("Uso: play <linha> <coluna>")
         else:
           self.router.route(commandStr)

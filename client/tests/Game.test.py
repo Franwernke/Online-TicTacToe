@@ -1,16 +1,16 @@
 import sys
 sys.path.insert(1, '/Users/franciscowernke/Documents/USP/Redes/Online-TicTacToe/client')
 
-from Game import Game
+from entities.Game import Game
 
-game = Game("O")
+game = Game("O", "joao")
 
-game.markSpot("O", 0, 0)
+print("começo")
 
-game.markSpot("X", 0, 1)
-
-game.markSpot("O", 0, 1)
-
-game.markSpot("X", 2, 0)
+game.markSpot("X", 0, 0)
+game.markSpot("X", 1, 1)
+game.markSpot("X", 2, 1)
 
 game.printBoard()
+
+print(game.didWin("X"))

@@ -58,3 +58,6 @@ class ClientDomainI:
   
   def createConnectionWithClient(self, address, port):
     pass
+
+  def disconnectFromPlayer(self):
+    pass

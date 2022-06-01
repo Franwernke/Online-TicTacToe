@@ -62,8 +62,6 @@ class InitialState(State):
   def refuseGame(self, user):
     print("Você precisa estar logado!!!")
 
-
-
 class LoggedIn(State):
   def createNewUser(self, user, password):
     print("Saia antes de criar um novo usuário!")
@@ -98,14 +96,16 @@ class LoggedIn(State):
       response = responseStr.split()
 
       if response[0] == "accept":
-        myTurn = response[2]
+        myToken = response[2]
+        opponentToken = "X" if myToken == "O" else "O"
         print("O oponente aceitou o convite!")
         response = self.client.sendMessageToServer("startgame " + self.client.user + " " + opponent)
-        game = Game(myTurn)
-        self.client.changeState(HisTurn(self.client, game) if myTurn == "O" else MyTurn(self.client, game))
+        game = Game(opponentToken, opponent)
+        self.client.changeState(HisTurn(self.client, game) if myToken == "O" else MyTurn(self.client, game))
       else:
+        self.client.disconnectFromPlayer()
         print("O oponente não aceitou o convite.")
-      
+
     else:
       print(responseStr)
 
@@ -123,8 +123,8 @@ class LoggedIn(State):
       opponentTurn = self.decideTurn()
       self.client.sendMessageToPeerToPeerNoResp("P accept " + self.invitingUser + " " + opponentTurn)
       print("Você aceitou a partida!")
+      game = Game(opponentTurn, self.invitingUser)
       self.invitingUser = None
-      game = Game(opponentTurn)
       self.client.changeState(HisTurn(self.client, game) if opponentTurn == "X" else MyTurn(self.client, game))
     else:
       print("Ninguém te convidou! Você está bem?")
@@ -188,8 +188,31 @@ class MyTurn(State):
       print("Insira uma jogada válida!")
       return
     self.game.markSpot(self.game.myToken, line, column)
-    self.client.sendMessageToPeerToPeer("play " + str(line) + " " + str(column))
-    self.client.changeState(HisTurn(self.client, self.game))
+
+    if self.game.didWin(self.game.myToken):
+      self.game.printBoard()
+    
+      print("Você ganhou!!!")
+      print("Você recebeu 3 pontos!")
+    
+      self.client.sendMessageToServer("won " + self.client.user + " " + self.game.opponentUser)
+      self.client.changeState(LoggedIn(self.client))
+      self.client.disconnectFromPlayer()
+
+    elif self.game.isDraw():
+      self.game.printBoard()
+    
+      print("Deu empate")
+      print("Você recebeu 1 ponto")
+    
+      self.client.sendMessageToServer("draw " + self.client.user + " " + self.game.opponentUser)
+      self.client.changeState(LoggedIn(self.client))
+      self.client.disconnectFromPlayer()
+    
+    else:
+      self.client.changeState(HisTurn(self.client, self.game))
+
+    self.client.sendMessageToPeerToPeerNoResp("play " + str(line) + " " + str(column))
 
   def showLatency(self):
     print("Você não está conectado a nenhum player!!!")
@@ -234,8 +257,27 @@ class HisTurn(State):
     print("usuario {opponent} te passas a bufa, aceitas?")
 
   def sendMove(self, line, column):
+    print()
     self.game.markSpot(self.game.hisToken, line, column)
-    self.client.changeState(MyTurn(self.client, self.game))
+    
+    if self.game.didWin(self.game.hisToken):
+      self.game.printBoard()
+      print("Você perdeu :(")
+      print("Você recebeu 0 pontos")
+      self.client.changeState(LoggedIn(self.client))
+      self.client.disconnectFromPlayer()
+
+    elif self.game.isDraw():
+      self.game.printBoard()
+      print("Deu empate")
+      print("Você recebeu 1 ponto")
+      self.client.changeState(LoggedIn(self.client))
+      self.client.disconnectFromPlayer()
+    
+    else:
+      self.client.changeState(MyTurn(self.client, self.game))
+    
+    print("JogoDaVelha> ", end="")
 
   def showLatency(self):
     print("Você não está conectado a nenhum player!!!")

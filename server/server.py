@@ -50,6 +50,9 @@ class Server:
   def startgame(self, invitingUser, invitedUser):
     self.repository.changeStatus(invitingUser, "emJogo")
     self.repository.changeStatus(invitedUser, "emJogo")
+    invitingUserIp = self.repository.getOnlinePlayer(invitingUser).ip
+    invitedUserIp = self.repository.getOnlinePlayer(invitedUser).ip
+    self.log.startgame(invitingUser, invitedUser, invitingUserIp, invitedUserIp)
 
   def setWinner(self, winnerUser, loserUser):
     self.repository.changeStatus(winnerUser, "livre")
