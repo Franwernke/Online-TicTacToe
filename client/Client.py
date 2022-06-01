@@ -61,6 +61,9 @@ class ClientDomain(ClientDomainI):
   def refuseGame(self):
     self.state.refuseGame()
 
+  def receiveEndgame(self):
+    self.state.receiveEndgame()
+
   def sendHeartbeat(self):
     self.serverOutput.sendMessage("heartbeat")
 

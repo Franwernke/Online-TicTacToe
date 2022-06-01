@@ -66,7 +66,7 @@ veio o login); (Implementado, testado)
 
 • Inı́cio de uma partida (Endereço IP e nomes dos usuários dos jogadores); (Implementado, testado)
 
-• Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (Implementado, testado, falta o over)
+• Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (Implementado, testado)
 
 • Desconexão inesperada de um cliente, verificada pelos heartbeats (Endereço IP do cliente); (???)
 
@@ -75,4 +75,4 @@ veio o login); (Implementado, testado)
 
  --------------------------------------------------------------
 
-
+Erro na comunicação dos clientes (após um refuses)

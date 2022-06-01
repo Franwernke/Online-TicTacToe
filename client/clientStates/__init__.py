@@ -216,10 +216,9 @@ class MyTurn(State):
       self.client.disconnectFromPlayer()
 
   def showLatency(self):
-    print("Você não está conectado a nenhum player!!!")
+    print("In progress")
 
-  def endGame(self):
-    print("Você não está em nenhuma partida!!!")
+
 
   def logout(self):
     print("Saia do jogo antes de deslogar!!!")
@@ -229,6 +228,18 @@ class MyTurn(State):
 
   def refuseGame(self, user):
     print("Você precisa sair do jogo antes!!!")
+
+  def endGame(self):
+    self.client.sendMessageToServer("over " + self.client.user + " " + self.game.opponentUser)
+    self.client.sendMessageToPeerToPeerNoResp("finish")
+    self.client.disconnectFromPlayer()
+    print("Jogo finalizado")
+    self.client.changeState(LoggedIn(self.client))
+
+  def receiveEndgame(self):
+    self.client.disconnectFromPlayer()
+    print("Jogo finalizado")
+    self.client.changeState(LoggedIn(self.client))
 
 class HisTurn(State):
   def __init__(self, client, game: Game):
@@ -281,10 +292,7 @@ class HisTurn(State):
     print("JogoDaVelha> ", end="")
 
   def showLatency(self):
-    print("Você não está conectado a nenhum player!!!")
-
-  def endGame(self):
-    print("Você não está em nenhuma partida!!!")
+    print("In progress")
 
   def logout(self):
     print("Saia do jogo antes de deslogar!!!")
@@ -294,3 +302,11 @@ class HisTurn(State):
 
   def refuseGame(self, user):
     print("Você precisa sair do jogo antes!!!")
+
+  def endGame(self):
+    print("Espere sua vez para sair do jogo!!!")
+
+  def receiveEndgame(self):
+    self.client.disconnectFromPlayer()
+    print("Jogo finalizado")
+    self.client.changeState(LoggedIn(self.client))
