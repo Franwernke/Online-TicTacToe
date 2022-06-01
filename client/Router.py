@@ -67,6 +67,8 @@ class Router:
 
     elif request[0] == "heartbeat":
       self.client.sendHeartbeat()
+    elif request[0] == "bye":
+      self.client.disconnect()
 
   def route(self, messageStr: str):
     message = messageStr.split()

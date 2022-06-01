@@ -131,8 +131,9 @@ class LoggedIn(State):
 
   def refuseGame(self):
     if self.invitingUser:
-      self.client.sendMessageToPeerToPeer("P refuse " + self.invitingUser)
+      self.client.sendMessageToPeerToPeerNoResp("P refuse " + self.invitingUser)
       self.invitingUser = None
+      self.client.disconnectFromPlayer()
     else:
       print("Ninguém te convidou! Você está bem?")
 

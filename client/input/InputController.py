@@ -94,3 +94,5 @@ class InputController:
 
       commandStr = input("JogoDaVelha> ")
       command = commandStr.split()
+
+    self.router.route(KeyboardCommands.bye)

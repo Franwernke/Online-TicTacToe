@@ -6,7 +6,7 @@ from exceptions.UserAlreadyLoggedIn import UserAlreadyLoggedIn
 from exceptions.UserIsAlreadyInGame import UserIsAlreadyInGame
 from exceptions.UserIsNotAvailable import UserIsNotAvailable
 from log import Log
-from .server import Server
+from server import Server
 
 class GenericController:
   def delayHeartbeat(self):

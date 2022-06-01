@@ -9,11 +9,13 @@ class ServerTCP(TransportLayer):
     self.listenfdTCP = socket(AF_INET, SOCK_STREAM)
     self.listenfdTCP.bind((str(INADDR_ANY), 0))
     self.listenfdTCP.listen(1)
+    self.lock = Lock()
     self.acceptConnectionsThread = Thread(target=acceptConnections,
                                           name='Accept Invitations',
                                           args=[self])
-    self.acceptConnectionsThread.start()
+    self.acceptConnectionsThread.daemon = True
     self.tcpLayer: TCPLayer = None
+    self.acceptConnectionsThread.start()
 
   def sendMessage(self, message):
     try:
@@ -30,14 +32,26 @@ class ServerTCP(TransportLayer):
 
   def killConnection(self):
     try:
+      print("kill connection")
       self.tcpLayer.closeSocket()
       self.tcpLayer = None
-      self.lock.acquire()
+      self.lock.release()
+      print("Release killconnection")
     except AttributeError:
       print("Você precisa ter uma conexão ativa para fechar a conexão")
   
   def setTransportLayer(self, connectedSocket):
+    self.lock.acquire()
     self.tcpLayer = TCPLayer(connectedSocket=connectedSocket)
+
+  def transportLayerExists(self)-> bool:
+    print("Antes do acquire")
+    self.lock.acquire()
+    print("Depois do acquire")
+    isThereTransportLayer = self.tcpLayer != None
+    self.lock.release()
+    print("Release transportLayer")
+    return isThereTransportLayer
 
   def updateTransportLayer(self, address, port):
     self.tcpLayer = TCPLayer(address=address, port=port)
@@ -48,6 +62,6 @@ class ServerTCP(TransportLayer):
 
 def acceptConnections(serverData: ServerTCP):
   while True:
-    (connfd, address) = serverData.listenfdTCP.accept()
-    if not serverData.tcpLayer:
+    if not serverData.transportLayerExists():
+      (connfd, address) = serverData.listenfdTCP.accept()
       serverData.setTransportLayer(connfd)

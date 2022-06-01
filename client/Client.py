@@ -64,6 +64,9 @@ class ClientDomain(ClientDomainI):
   def sendHeartbeat(self):
     self.serverOutput.sendMessage("heartbeat")
 
+  def disconnect(self):
+    self.serverOutput.sendMessage("bye")
+
   def sendMessageToServer(self, message):
     self.serverOutput.sendMessage(message)
     return self.feedbackController.recvResponse(FifoChoice.serverResponse)
@@ -77,3 +80,6 @@ class ClientDomain(ClientDomainI):
 
   def createConnectionWithClient(self, address, port):
     self.peerToPeerOutput.updateTransportLayer(address, port)
+
+  def disconnectFromPlayer(self):
+    self.peerToPeerOutput.killConnection()

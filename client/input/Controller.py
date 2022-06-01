@@ -8,6 +8,7 @@ class Controller:
     self.router = router
     self.threadName = threadName
     self.listenThread = Thread(target=listenThread, args=[self], name=threadName)
+    self.listenThread.daemon = True
 
   def listen(self):
     self.listenThread.start()

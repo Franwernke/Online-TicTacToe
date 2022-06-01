@@ -55,14 +55,14 @@ História:
  • Servidor iniciado (Informando se a última execução dele foi finalizada com sucesso ou se houve
 uma falha. Caso houve falha, e se havia alguma partida em execução, ele deve retomar o “controle”
 dessa partida passando a enviar os heartbeats para os clientes, caso eles ainda estejam conectados
-entre eles) (Implementado, mas sem apontar a falha, sem testar)
+entre eles) (Implementado, mas sem apontar a falha, testado!)
 
-• Conexão realizada por um cliente (Endereço IP do cliente); (Implementado, mas sem testar)
+• Conexão realizada por um cliente (Endereço IP do cliente); (Implementado, testado)
 
 • Login com sucesso ou não (Nome do usuário que conseguiu, ou não, logar, e endereço IP de onde
-veio o login); (Implementado, mas sem testar)
+veio o login); (Implementado, testado)
 
-• Desconexão realizada por um cliente (Endereço IP do cliente);  (Implementado, mas sem testar, cliente precisa enviar um bye)
+• Desconexão realizada por um cliente (Endereço IP do cliente);  (Implementado, testado)
 
 • Inı́cio de uma partida (Endereço IP e nomes dos usuários dos jogadores); (Implementado, mas sem testar)
 

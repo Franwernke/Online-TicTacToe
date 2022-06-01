@@ -10,12 +10,12 @@ class Log:
       os.makedirs(BASEPATH + LOGPATH)
     
     file = open(BASEPATH + LOGPATH + LOGFILENAME, "w")
-    file.write("Servidor iniciado!")
+    file.write("Servidor iniciado!\n")
     file.close()
 
   def writeLogFile(self, text):
     file = open(BASEPATH + LOGPATH + LOGFILENAME, "a")
-    file.write(text)
+    file.write(text + "\n")
     file.close()
 
   def newConnection(self, ip):
@@ -25,7 +25,7 @@ class Log:
     if success:
       self.writeLogFile("Usuário " + userName + " conseguiu logar." + " IP: " + str(ip)) 
     else:
-      self.writeLogFile("Usuário " + userName + " não conseguiu logar." + " IP: " + str(ip))
+      self.writeLogFile("Um cliente não conseguiu logar na conta " + userName + " IP: " + str(ip))
 
   def disconnect(self, ip):
     self.writeLogFile("Desconexão." + " IP: " + str(ip))

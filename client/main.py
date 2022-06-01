@@ -1,7 +1,5 @@
-import atexit
 import os
 import shutil
-import signal
 import sys
 from input.InputController import InputController
 from input.FeedbackController import FeedbackController
@@ -17,7 +15,6 @@ from Client import ClientDomain
 BASEPATH = '/tmp/ep2/client/'
 
 def main():
-  atexit.register(cleanup)
 
   if os.path.exists(BASEPATH + str(os.getpid()) + '/FIFOs/'):
     shutil.rmtree(BASEPATH + str(os.getpid()) + '/FIFOs/')
@@ -55,11 +52,7 @@ def main():
 
   inputController = InputController(router)
   inputController.listenToKeyboard()
-  sys.exit()
-
-def cleanup():
-  os.killpg(0, signal.SIGKILL)
+  print("Rapaz, esse é meu patrão")
 
 if __name__ == "__main__":
-  os.setpgrp()
   main()
