@@ -189,30 +189,31 @@ class MyTurn(State):
       return
     self.game.markSpot(self.game.myToken, line, column)
 
-    if self.game.didWin(self.game.myToken):
+    didWin = self.game.didWin(self.game.myToken)
+    isDraw = self.game.isDraw()
+
+    if didWin:
       self.game.printBoard()
     
       print("Você ganhou!!!")
       print("Você recebeu 3 pontos!")
-    
+   
       self.client.sendMessageToServer("won " + self.client.user + " " + self.game.opponentUser)
-      self.client.changeState(LoggedIn(self.client))
-      self.client.disconnectFromPlayer()
-
-    elif self.game.isDraw():
+    elif isDraw:
       self.game.printBoard()
     
       print("Deu empate")
       print("Você recebeu 1 ponto")
     
       self.client.sendMessageToServer("draw " + self.client.user + " " + self.game.opponentUser)
-      self.client.changeState(LoggedIn(self.client))
-      self.client.disconnectFromPlayer()
-    
     else:
       self.client.changeState(HisTurn(self.client, self.game))
 
     self.client.sendMessageToPeerToPeerNoResp("play " + str(line) + " " + str(column))
+
+    if didWin or isDraw:
+      self.client.changeState(LoggedIn(self.client))
+      self.client.disconnectFromPlayer()
 
   def showLatency(self):
     print("Você não está conectado a nenhum player!!!")
