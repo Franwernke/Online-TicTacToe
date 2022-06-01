@@ -64,9 +64,9 @@ veio o login); (Implementado, testado)
 
 • Desconexão realizada por um cliente (Endereço IP do cliente);  (Implementado, testado)
 
-• Inı́cio de uma partida (Endereço IP e nomes dos usuários dos jogadores); (Implementado, mas sem testar)
+• Inı́cio de uma partida (Endereço IP e nomes dos usuários dos jogadores); (Implementado, testado)
 
-• Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (Implementado, mas sem testar)
+• Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (Implementado, testado, falta o over)
 
 • Desconexão inesperada de um cliente, verificada pelos heartbeats (Endereço IP do cliente); (???)
 
