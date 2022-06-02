@@ -1,6 +1,7 @@
 #!/bin/python3
 
 import sys
+from time import sleep
 from TCPController import TCPController
 from UDPController import UDPController
 from repository import Repository
@@ -18,7 +19,7 @@ def main():
   tcpController.acceptConnections()
   print("O servidor está escutando na porta", port)
   while True:
-    continue
+    sleep(100)
 
 if __name__ == "__main__":
   main()

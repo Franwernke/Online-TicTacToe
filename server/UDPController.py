@@ -1,6 +1,6 @@
-import os
 from socket import *
 import sys
+from threading import Thread
 from server import Server
 from GenericController import GenericController
 from log import Log
@@ -13,26 +13,16 @@ class UDPController(GenericController):
     self.listenfd = socket(AF_INET, SOCK_DGRAM)
     self.listenfd.bind((str(INADDR_ANY), port))
     self.addresses = set()
-  
+    self.acceptConnectionsThread = Thread(target=acceptConnectionsThreadFunc, name='Accept connections thread', args=[self])
+
   def acceptConnections(self):
-    childpid = os.fork()
-    if childpid == 0:
-      while True:
-        recvline = self.listenfd.recvfrom(4096)
-        if not recvline[1] in self.addresses:
-          self.addresses.add(recvline[1])
-          self.log.newConnection(recvline[1][0])
-          self.sendHeartbeats(recvline[1])
+    self.acceptConnectionsThread.start()
 
-        self.resolveMessage(recvline[0].decode("utf-8"), recvline[1])
-        print("Received from UDP: " + recvline[0].decode("utf-8"))
-        sys.stdout.flush()
-
-  def sendMessage(self, messageStr, address):
+  def sendMessage(self, messageStr: str, address):
     message = bytes(messageStr, "utf-8")
     self.listenfd.sendto(message, address)
 
-  def resolveMessage(self, message, address):
+  def resolveMessage(self, message: str, address):
     command = message.split()
     # self.writeInFifo()
     responseString = self.processCommand(command, address)
@@ -40,10 +30,22 @@ class UDPController(GenericController):
     if responseString != "DONOTANSWER":
       self.sendMessage(responseString, address)
 
-  def sendHeartbeats(self, address):
-    childPid = os.fork()
-    
-    if childPid == 0:
-      while True:
-        self.delayHeartbeat()
-        self.sendMessage("heartbeat", address)
+def acceptConnectionsThreadFunc(controller: UDPController):
+  while True:
+    recvline = controller.listenfd.recvfrom(4096)
+
+    if not recvline[1] in controller.addresses:
+      controller.addresses.add(recvline[1])
+      controller.log.newConnection(recvline[1][0])
+
+      sendHeartbeatsThread = Thread(target=sendHeartbeats, name='Address ' + str(recvline[1]) + ' heartbeat', args=[controller, recvline[1]])
+      sendHeartbeatsThread.start()
+
+    controller.resolveMessage(recvline[0].decode("utf-8"), recvline[1])
+    print("Received from UDP: " + recvline[0].decode("utf-8"))
+    sys.stdout.flush()
+
+def sendHeartbeats(controller: UDPController, address):
+  while True:
+    controller.delayHeartbeat()
+    controller.sendMessage("heartbeat", address)
