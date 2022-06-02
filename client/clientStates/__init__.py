@@ -91,8 +91,9 @@ class LoggedIn(State):
 
     if response[0] == "OK":
       self.client.createConnectionWithClient(response[1], response[2])
-      responseStr = self.client.sendMessageToPeerToPeer("invite " + self.client.user)
       print("Esperando resposta do convite...")
+      responseStr = self.client.sendMessageToPeerToPeer("invite " + self.client.user)
+      print(responseStr)
       response = responseStr.split()
 
       if response[0] == "accept":

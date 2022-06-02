@@ -22,5 +22,3 @@ class TCPLayer(TransportLayer):
     message = self.sockfd.recv(4096).decode(ENCODING)
     return message
 
-  def closeSocket(self):
-    self.sockfd.close()

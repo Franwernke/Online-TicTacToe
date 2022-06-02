@@ -30,8 +30,6 @@ class ServerTCP(TransportLayer):
         return self.tcpLayer.recvMessage()
       except:
         return
-    else:
-      sleep(0.5)
 
   def closeSocket(self):
     self.listenfdTCP.close()
@@ -41,7 +39,8 @@ class ServerTCP(TransportLayer):
       self.tcpLayer.closeSocket()
       self.tcpLayer = None
       self.lock.release()
-    except AttributeError:
+      print("Saí do release")
+    except:
       print("Você precisa ter uma conexão ativa para fechar a conexão")
   
   def setTransportLayer(self, connectedSocket):

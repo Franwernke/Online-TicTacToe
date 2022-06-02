@@ -17,6 +17,3 @@ class UDPLayer(TransportLayer):
   def recvMessage(self):
     message = self.sockfd.recvfrom(4096)[0].decode(ENCODING)
     return message
-
-  def closeSocket(self):
-    self.sockfd.close()

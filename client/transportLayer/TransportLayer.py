@@ -1,3 +1,5 @@
+from socket import *
+
 class TransportLayer:
   
   def sendMessage(self, messageStr) -> None:
@@ -6,5 +8,6 @@ class TransportLayer:
   def recvMessage(self) -> str:
     pass
 
-  def closeSocket(self) -> None:
-    pass
+  def closeSocket(self):
+    self.sockfd.shutdown(SHUT_RDWR)
+    self.sockfd.close()

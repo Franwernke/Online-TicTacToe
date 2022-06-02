@@ -50,7 +50,7 @@ História:
   clientWinner -over-> server (over <firstUser> <secondUser>)
   servidor -OK-> clientWinner
 
-  (IMPLEMENTADO, mas não testado)
+  (IMPLEMENTADO e testado)
  --------------------------------------
  • Servidor iniciado (Informando se a última execução dele foi finalizada com sucesso ou se houve
 uma falha. Caso houve falha, e se havia alguma partida em execução, ele deve retomar o “controle”
@@ -75,4 +75,4 @@ veio o login); (Implementado, testado)
 
  --------------------------------------------------------------
 
-Erro na comunicação dos clientes (após um refuses)
+Erro na comunicação dos clientes (CORRIGIDO)
