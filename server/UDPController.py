@@ -1,9 +1,31 @@
 from socket import *
 import sys
-from threading import Thread
+from threading import Thread, Lock
+import time
 from server import Server
 from GenericController import GenericController
 from log import Log
+
+class UDPSocketWrapper:
+  def __init__(self, address: tuple) -> None:
+    self.address = address
+    self.keepHeartbeating = True
+    self.lock = Lock()
+    self.receivedResponse = False
+
+  def getResponseOrFail(self):
+    tic = time.perf_counter()
+    while True:
+      delta = time.perf_counter() - tic
+      if self.receivedResponse == True:
+        self.receivedResponse = False
+        print("Recebi a resposta do heartbeat de", self.address)
+        print("Resposta em", delta, "segundos")
+        return True
+      elif delta > 5:
+        print("TIMEOUT: O cliente", self.address, "foi desconectado")
+        self.receivedResponse = False
+        return False
 
 class UDPController(GenericController):
   def __init__(self, port, server: Server, log: Log):
@@ -38,14 +60,25 @@ def acceptConnectionsThreadFunc(controller: UDPController):
       controller.addresses.add(recvline[1])
       controller.log.newConnection(recvline[1][0])
 
-      sendHeartbeatsThread = Thread(target=sendHeartbeats, name='Address ' + str(recvline[1]) + ' heartbeat', args=[controller, recvline[1]])
+      socketWrapperForHeartbeats = UDPSocketWrapper(recvline[1])
+
+      sendHeartbeatsThread = Thread(target=sendHeartbeats, name='Address ' + str(recvline[1]) + ' heartbeat', 
+                                    args=[controller, socketWrapperForHeartbeats])
       sendHeartbeatsThread.start()
 
-    controller.resolveMessage(recvline[0].decode("utf-8"), recvline[1])
+    message = recvline[0].decode("utf-8")
+    if message == 'heartbeat':
+      socketWrapperForHeartbeats.receivedResponse = True
+    else:
+      controller.resolveMessage(recvline[0].decode("utf-8"), recvline[1])
+    
     print("Received from UDP: " + recvline[0].decode("utf-8"))
     sys.stdout.flush()
 
-def sendHeartbeats(controller: UDPController, address):
-  while True:
+def sendHeartbeats(controller: UDPController, socketWrapper: UDPSocketWrapper):
+  while socketWrapper.keepHeartbeating:
     controller.delayHeartbeat()
-    controller.sendMessage("heartbeat", address)
+    controller.sendMessage("heartbeat", socketWrapper.address)
+    print("Mandei um heartbeat para ", socketWrapper.address)
+    if not socketWrapper.getResponseOrFail():
+      controller.server.disconnectDueToTimeout(socketWrapper.address[0], socketWrapper.address[1])

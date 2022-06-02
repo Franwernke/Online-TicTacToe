@@ -1,9 +1,16 @@
 from socket import *
 import sys
-from threading import Thread
+from threading import Thread, Lock
 from server import Server
 from GenericController import GenericController
 from log import Log
+
+class TCPSocketWrapper:
+  def __init__(self, connfd: socket, address: tuple) -> None:
+    self.connfd = connfd
+    self.address = address
+    self.keepHeartbeating = True
+    self.lock = Lock()
 
 class TCPController(GenericController):
   def __init__(self, port: int, server: Server, log: Log):
@@ -41,7 +48,10 @@ def handleConnection(controller: TCPController, connfd: socket, address):
   controller.log.newConnection(address[0])
   print("Um novo cliente se conectou!")
 
-  threadHeartbeats = Thread(target=sendHeartbeats, name='Heartbeat of ' + str(address), args=[controller, connfd])
+  socketWrapperForHeartbeats = TCPSocketWrapper(connfd, address)
+
+  threadHeartbeats = Thread(target=sendHeartbeats, name='Heartbeat of ' + 
+                            str(address), args=[controller, socketWrapperForHeartbeats])
   threadHeartbeats.start()
 
   recvline = connfd.recv(4096)
@@ -50,10 +60,18 @@ def handleConnection(controller: TCPController, connfd: socket, address):
     print("Received from TCP: " + recvline.decode("utf-8"))
     sys.stdout.flush()
     recvline = connfd.recv(4096)
+
+  socketWrapperForHeartbeats.keepHeartbeating = False
+
+  socketWrapperForHeartbeats.lock.acquire()
   connfd.close()
+  socketWrapperForHeartbeats.lock.release()
   print("O cliente foi desconectado!")
 
-def sendHeartbeats(controller: TCPController, connfd: socket):
-  while True:
+def sendHeartbeats(controller: TCPController, socketWrapper: TCPSocketWrapper):
+  while socketWrapper.keepHeartbeating:
     controller.delayHeartbeat()
-    controller.sendMessage("heartbeat", connfd)
+    socketWrapper.lock.acquire()
+    if socketWrapper.keepHeartbeating:
+      controller.sendMessage("heartbeat", socketWrapper.connfd)
+    socketWrapper.lock.release()

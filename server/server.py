@@ -1,3 +1,4 @@
+from http import server
 from socket import *
 from repository import Repository
 from exceptions.WrongPasswordException import WrongPasswordException
@@ -43,9 +44,6 @@ class Server:
   
   def logout(self, username):
     self.repository.removeOnlinePlayer(username)
-  
-  def handleHeartbeat(self, address):
-    print(address, " está bem!")
 
   def startgame(self, invitingUser, invitedUser):
     self.repository.changeStatus(invitingUser, "emJogo")
@@ -93,4 +91,8 @@ class Server:
 
     self.log.finishGame(firstUser, secondUser, firstIp, secondIp, "Ninguém")
 
-
+  def disconnectDueToTimeout(self, ip: str, port: str):
+    onlinePlayers = self.repository.listOnlinePlayers()
+    for player in onlinePlayers:
+      if player.ip == ip and player.port == port:
+        self.logout(player.username)
