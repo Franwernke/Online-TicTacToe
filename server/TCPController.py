@@ -45,6 +45,7 @@ def acceptConnectionsThreadFunc(controller: TCPController):
     threadHandleConnection.start()
 
 def handleConnection(controller: TCPController, connfd: socket, address):
+  disconnected = False
   controller.log.newConnection(address[0])
   print("Um novo cliente se conectou!")
 
@@ -56,17 +57,29 @@ def handleConnection(controller: TCPController, connfd: socket, address):
 
   recvline = connfd.recv(4096)
   while recvline:
-    controller.resolveMessage(recvline.decode("utf-8"), connfd, address)
+    if recvline.decode("utf-8") == "bye":
+      disconnected = True
+
+    if recvline.decode("utf-8") != "heartbeat":
+      controller.resolveMessage(recvline.decode("utf-8"), connfd, address)
+
     print("Received from TCP: " + recvline.decode("utf-8"))
     sys.stdout.flush()
     recvline = connfd.recv(4096)
 
-  socketWrapperForHeartbeats.keepHeartbeating = False
-
   socketWrapperForHeartbeats.lock.acquire()
+
+  socketWrapperForHeartbeats.keepHeartbeating = False
+  connfd.shutdown(SHUT_RDWR)
   connfd.close()
+
   socketWrapperForHeartbeats.lock.release()
-  print("O cliente foi desconectado!")
+  
+  if disconnected:
+    print("O cliente foi desconectado!")
+  else:
+    print("Desconexão inesperada do cliente!")
+    controller.log.unexpectedDisconnect(address[0])
 
 def sendHeartbeats(controller: TCPController, socketWrapper: TCPSocketWrapper):
   while socketWrapper.keepHeartbeating:
