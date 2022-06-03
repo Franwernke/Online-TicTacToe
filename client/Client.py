@@ -46,6 +46,7 @@ class ClientDomain(ClientDomainI):
     self.measureLatency = False
 
     self.latencyThread = Thread(target=sendLatency, name="latency thread", args=[self])
+    self.latencyThread.daemon = True
     self.latencyThread.start()
 
   def changeState(self, newState):
