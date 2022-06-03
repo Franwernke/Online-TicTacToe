@@ -24,7 +24,6 @@ class UDPSocketWrapper:
         return True
       elif delta > 5:
         print("TIMEOUT: O cliente", self.address, "foi desconectado")
-        self.receivedResponse = False
         return False
 
 class UDPController(GenericController):
@@ -34,7 +33,8 @@ class UDPController(GenericController):
 
     self.listenfd = socket(AF_INET, SOCK_DGRAM)
     self.listenfd.bind((str(INADDR_ANY), port))
-    self.addresses = set()
+    self.wrappers = dict()
+    self.disconnected = dict()
     self.acceptConnectionsThread = Thread(target=acceptConnectionsThreadFunc, name='Accept connections thread', args=[self])
 
   def acceptConnections(self):
@@ -53,14 +53,18 @@ class UDPController(GenericController):
       self.sendMessage(responseString, address)
 
 def acceptConnectionsThreadFunc(controller: UDPController):
+  
   while True:
     recvline = controller.listenfd.recvfrom(4096)
 
-    if not recvline[1] in controller.addresses:
-      controller.addresses.add(recvline[1])
+    if not recvline[1] in controller.wrappers:
+      
       controller.log.newConnection(recvline[1][0])
 
       socketWrapperForHeartbeats = UDPSocketWrapper(recvline[1])
+
+      controller.wrappers[recvline[1]] = socketWrapperForHeartbeats
+      controller.disconnected[recvline[1]] = False
 
       sendHeartbeatsThread = Thread(target=sendHeartbeats, name='Address ' + str(recvline[1]) + ' heartbeat', 
                                     args=[controller, socketWrapperForHeartbeats])
@@ -68,8 +72,10 @@ def acceptConnectionsThreadFunc(controller: UDPController):
 
     message = recvline[0].decode("utf-8")
     if message == 'heartbeat':
-      socketWrapperForHeartbeats.receivedResponse = True
+      controller.wrappers[recvline[1]].receivedResponse = True
     else:
+      if message == 'bye':
+        controller.disconnected[recvline[1]] = True
       controller.resolveMessage(recvline[0].decode("utf-8"), recvline[1])
     
     print("Received from UDP: " + recvline[0].decode("utf-8"))
@@ -81,4 +87,11 @@ def sendHeartbeats(controller: UDPController, socketWrapper: UDPSocketWrapper):
     controller.sendMessage("heartbeat", socketWrapper.address)
     print("Mandei um heartbeat para ", socketWrapper.address)
     if not socketWrapper.getResponseOrFail():
-      controller.server.disconnectDueToTimeout(socketWrapper.address[0], socketWrapper.address[1])
+      # controller.server.disconnectDueToTimeout(socketWrapper.address[0], socketWrapper.address[1])
+      socketWrapper.keepHeartbeating = False
+
+      if controller.disconnected[socketWrapper.address]:
+        print("O cliente foi desconectado!")
+      else:
+        print("Desconexão inesperada do cliente!")
+        controller.log.unexpectedDisconnect(socketWrapper.address[0])
