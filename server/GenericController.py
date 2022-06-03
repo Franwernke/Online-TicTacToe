@@ -34,7 +34,7 @@ class GenericController:
 
     elif command[0] == "in":
       try:
-        self.server.loginUser(command[1], command[2], (address[0], command[3]))
+        self.server.loginUser(command[1], command[2], (address[0], command[3]), address[1])
         self.log.newLogin(command[1], True, address[0])
         return "P OK"
       except UserNotFoundException as e:

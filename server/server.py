@@ -14,11 +14,11 @@ class Server:
     self.repository.createNewUser(username, password)
     self.repository.changeUserScore(username, 0)
 
-  def loginUser(self, username, password, address):
+  def loginUser(self, username, password, p2paddress, port):
     user = self.repository.getUser(username)
     if user.password != password:
       raise WrongPasswordException()
-    self.repository.createOnlinePlayer(username, address)
+    self.repository.createOnlinePlayer(username, p2paddress, port)
 
 
   def changePassword(self, username, oldPassword, newPassword):
@@ -91,8 +91,7 @@ class Server:
 
     self.log.finishGame(firstUser, secondUser, firstIp, secondIp, "Ninguém")
 
-  def disconnectDueToTimeout(self, ip: str, port: str):
-    onlinePlayers = self.repository.listOnlinePlayers()
-    for player in onlinePlayers:
-      if player.ip == ip and player.port == port:
-        self.logout(player.username)
+  def disconnectDueToTimeout(self, address):
+    onlinePlayer = self.repository.getOnlinePlayerByAddress(address)
+    if onlinePlayer:
+      self.logout(onlinePlayer)

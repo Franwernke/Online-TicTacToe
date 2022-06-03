@@ -28,11 +28,11 @@ class Repository:
     else:
       raise UserAlreadyExists
   
-  def createOnlinePlayer(self, user, address):
+  def createOnlinePlayer(self, user, p2paddress, port):
     if not os.path.exists(BASEPATH + "online/" + user):
       file = open(BASEPATH + "online/" + user, "w")
-      print(address)
-      file.write(user + " " + str(address[0]) + " " + str(address[1]) + " livre")
+      file.write(user + " " + str(p2paddress[0]) + " " + str(p2paddress[1]) + " livre " 
+                   + str(port))
     else:
       raise UserAlreadyLoggedIn
 
@@ -76,6 +76,14 @@ class Repository:
       onlinePlayers.append((user, userData[3]))
 
     return onlinePlayers
+
+  def getOnlinePlayerByAddress(self, address):
+    for user in os.listdir(BASEPATH + "online"):
+      file = open(BASEPATH + "online/" + user)
+      userData = file.read().split()
+
+      if userData[1] == str(address[0]) and userData[4] == str(address[1]):
+        return userData[0]
 
   def getOnlinePlayer(self, user):
     userSession = dict()

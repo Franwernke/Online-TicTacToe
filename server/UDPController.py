@@ -87,7 +87,7 @@ def sendHeartbeats(controller: UDPController, socketWrapper: UDPSocketWrapper):
     controller.sendMessage("heartbeat", socketWrapper.address)
     print("Mandei um heartbeat para ", socketWrapper.address)
     if not socketWrapper.getResponseOrFail():
-      # controller.server.disconnectDueToTimeout(socketWrapper.address[0], socketWrapper.address[1])
+      controller.server.disconnectDueToTimeout(socketWrapper.address)
       socketWrapper.keepHeartbeating = False
 
       if controller.disconnected[socketWrapper.address]:

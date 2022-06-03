@@ -81,6 +81,8 @@ def handleConnection(controller: TCPController, connfd: socket, address):
     print("Desconexão inesperada do cliente!")
     controller.log.unexpectedDisconnect(address[0])
 
+
+
 def sendHeartbeats(controller: TCPController, socketWrapper: TCPSocketWrapper):
   while socketWrapper.keepHeartbeating:
     controller.delayHeartbeat()
@@ -88,3 +90,6 @@ def sendHeartbeats(controller: TCPController, socketWrapper: TCPSocketWrapper):
     if socketWrapper.keepHeartbeating:
       controller.sendMessage("heartbeat", socketWrapper.connfd)
     socketWrapper.lock.release()
+
+  controller.server.disconnectDueToTimeout(socketWrapper.address)
+
