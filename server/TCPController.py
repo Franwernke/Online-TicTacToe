@@ -21,6 +21,7 @@ class TCPController(GenericController):
     self.listenfdTCP.bind((str(INADDR_ANY), port))
     self.listenfdTCP.listen(1)
     self.acceptConnectionsThread = Thread(target=acceptConnectionsThreadFunc, name='Accept connections', args=[self])
+    self.acceptConnectionsThread.daemon = True
 
   def acceptConnections(self):
     self.acceptConnectionsThread.start()
@@ -42,6 +43,7 @@ def acceptConnectionsThreadFunc(controller: TCPController):
     (connfd, address) = controller.listenfdTCP.accept()
 
     threadHandleConnection = Thread(target=handleConnection, name='Address ' + str(address) + ' thread', args=[controller, connfd, address])
+    threadHandleConnection.daemon = True
     threadHandleConnection.start()
 
 def handleConnection(controller: TCPController, connfd: socket, address):
@@ -53,6 +55,7 @@ def handleConnection(controller: TCPController, connfd: socket, address):
 
   threadHeartbeats = Thread(target=sendHeartbeats, name='Heartbeat of ' + 
                             str(address), args=[controller, socketWrapperForHeartbeats])
+  threadHeartbeats.daemon = True
   threadHeartbeats.start()
 
   recvline = connfd.recv(4096)

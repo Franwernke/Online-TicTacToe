@@ -36,6 +36,8 @@ class UDPController(GenericController):
     self.wrappers = dict()
     self.disconnected = dict()
     self.acceptConnectionsThread = Thread(target=acceptConnectionsThreadFunc, name='Accept connections thread', args=[self])
+    self.acceptConnectionsThread.daemon = True
+
 
   def acceptConnections(self):
     self.acceptConnectionsThread.start()
@@ -68,6 +70,7 @@ def acceptConnectionsThreadFunc(controller: UDPController):
 
       sendHeartbeatsThread = Thread(target=sendHeartbeats, name='Address ' + str(recvline[1]) + ' heartbeat', 
                                     args=[controller, socketWrapperForHeartbeats])
+      sendHeartbeatsThread.daemon = True
       sendHeartbeatsThread.start()
 
     message = recvline[0].decode("utf-8")
