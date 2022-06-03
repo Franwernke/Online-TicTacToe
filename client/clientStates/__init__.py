@@ -217,7 +217,7 @@ class MyTurn(State):
       self.client.disconnectFromPlayer()
 
   def showLatency(self):
-    print("In progress")
+    print(self.client.latencyRepository.getLatency())
 
 
 
@@ -293,7 +293,7 @@ class HisTurn(State):
     print("JogoDaVelha> ", end="")
 
   def showLatency(self):
-    print("In progress")
+    print(self.client.latencyRepository.getLatency())
 
   def logout(self):
     print("Saia do jogo antes de deslogar!!!")

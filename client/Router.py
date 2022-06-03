@@ -74,6 +74,9 @@ class Router:
     elif request[0] == "bye":
       self.client.disconnect()
 
+    elif request[0] == "latency":
+      self.client.answerLatency()
+
   def route(self, messageStr: str):
     message = messageStr.split()
     if message[0] == "P":

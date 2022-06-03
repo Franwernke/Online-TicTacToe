@@ -68,7 +68,7 @@ veio o login); (Implementado, testado)
 
 • Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e nome do vencedor); (Implementado, testado)
 
-• Desconexão inesperada de um cliente, verificada pelos heartbeats (Endereço IP do cliente); (???)
+• Desconexão inesperada de um cliente, verificada pelos heartbeats (Endereço IP do cliente); (implementado testado, usamos o mecanismo do tcp)
 
 • Servidor finalizado (?????)
 

@@ -1,11 +1,34 @@
 #!/bin/python3
-
+from threading import Thread, Lock
+import time
 from entities.ClientDomainI import ClientDomainI
 from input.FeedbackController import FeedbackController, FifoChoice
 from output.P2PRequester import P2PRequester
 from output.Requester import Requester
-from clientStates import State
+from clientStates import State, LoggedIn, HisTurn, MyTurn
 from socket import *
+
+
+class LatencyRepository:
+  def __init__(self) -> None:
+    self.latency = []
+
+  def startCounter(self):
+    self.tic = time.perf_counter()
+
+  def endCounter(self):
+    delta = time.perf_counter() - self.tic
+    self.latency.append(delta)
+
+    if len(self.latency) > 3:
+      del self.latency[0]
+
+  def getLatency(self):
+    return self.latency
+
+  def resetLatency(self):
+    self.latency = []
+
 
 ENCODING = 'utf-8'
 
@@ -16,8 +39,22 @@ class ClientDomain(ClientDomainI):
     self.peerToPeerOutput = peerToPeerOutput
     self.feedbackController = feedbackController
 
+    self.latencyRepository = LatencyRepository()
+
+    self.latencyLock = Lock()
+    self.runLatencyThread = True
+    self.measureLatency = False
+
+    self.latencyThread = Thread(target=sendLatency, name="latency thread", args=[self])
+    self.latencyThread.start()
+
   def changeState(self, newState):
+    if type(self.state) == LoggedIn and (type(newState) == HisTurn or type(newState) == MyTurn):
+      self.latencyLock.acquire()
+      self.measureLatency = True
+      self.latencyLock.release()
     self.state = newState
+    
 
   def getState(self):
     return self.state
@@ -85,4 +122,27 @@ class ClientDomain(ClientDomainI):
     self.peerToPeerOutput.updateTransportLayer(address, port)
 
   def disconnectFromPlayer(self):
+
+    self.latencyLock.acquire()
+    self.measureLatency = False
+    self.latencyRepository.resetLatency()
+    self.latencyLock.release()
+
     self.peerToPeerOutput.killConnection()
+  
+  def answerLatency(self):
+    self.sendMessageToPeerToPeerNoResp("P latency")
+
+def sendLatency(client: ClientDomain):
+  while client.runLatencyThread:
+    client.latencyLock.acquire()
+
+    if client.measureLatency:
+      client.latencyRepository.startCounter()
+      client.sendMessageToPeerToPeerNoResp("latency")
+      client.feedbackController.recvResponse(FifoChoice.latency)
+      client.latencyRepository.endCounter()
+
+    client.latencyLock.release()
+    time.sleep(1)
+
