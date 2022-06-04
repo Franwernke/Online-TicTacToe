@@ -95,3 +95,7 @@ class Server:
     onlinePlayer = self.repository.getOnlinePlayerByAddress(address)
     if onlinePlayer:
       self.logout(onlinePlayer)
+
+  def reconnect(self, username, status, p2paddress, port):
+    self.repository.createOnlinePlayer(username, p2paddress, port)
+    self.repository.changeStatus(username, status)

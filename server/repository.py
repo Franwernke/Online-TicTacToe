@@ -21,6 +21,9 @@ class Repository:
     if not os.path.exists(BASEPATH + "online"):
       os.makedirs(BASEPATH + "online")
 
+    for user in os.listdir(BASEPATH + "online"):
+      os.remove(BASEPATH + "online/" + user)
+
   def createNewUser(self, user, password):
     if not os.path.exists(BASEPATH + USERPATH + user):
       file = open(BASEPATH + USERPATH + user, "w")

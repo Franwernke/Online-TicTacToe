@@ -86,6 +86,8 @@ class GenericController:
 
     elif command[0] == "reconnect":
       self.log.serverFailed()
+      if len(command) > 1:
+        self.server.reconnect(command[1], command[2], (address[0], command[3]), address[1])
       return "P OK"
 
     elif command[0] == "bye":

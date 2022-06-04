@@ -59,6 +59,8 @@ ENCODING = 'utf-8'
 
 class ClientDomain(ClientDomainI):
   def __init__(self, serverOutput: Requester, peerToPeerOutput: P2PRequester, feedbackController: FeedbackController) -> None:
+    self.user = None
+    
     self.state = State.initialState(self)
     self.serverOutput = serverOutput
     self.peerToPeerOutput = peerToPeerOutput
@@ -168,7 +170,19 @@ class ClientDomain(ClientDomainI):
     responseTimeManager.verifyResponseTime()
 
     while not response:
-      self.serverOutput.sendMessage("reconnect")
+      messageToSend = "reconnect"
+
+      if self.user:
+        messageToSend += " " + self.user
+
+        if type(self.state) == LoggedIn:
+          messageToSend += " " + "livre"
+        else:
+          messageToSend += " " + "emJogo"
+
+        messageToSend += " " + str(self.peerToPeerOutput.getPort())
+
+      self.serverOutput.sendMessage(messageToSend)
       response = self.feedbackController.recvResponse(FifoChoice.serverResponse)
     
     responseTimeManager.receivedResponse = True

@@ -78,9 +78,13 @@ veio o login); (Implementado, testado)
 Erro na comunicação dos clientes (CORRIGIDO)
 
 TODO:
-- Manter o estado dos clientes no servidor
+- Manter o estado dos clientes no servidor em andamento OK
 - Colocar o log de desligamento abrupto do servidor OK
 - Colocar o log de desligamento normal no servidor OK
+
+-Bug na tolerância à falha: 
+  O udp só manda de volta seu estado de online durante uma requisição demorada (que falhou).
+  Isso faz ele ficar invisível
 
 - Corrigir os prints dos tabuleiros
 - Inverter as jogadas do tabuleiros
