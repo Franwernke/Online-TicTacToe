@@ -55,7 +55,7 @@ História:
  • Servidor iniciado (Informando se a última execução dele foi finalizada com sucesso ou se houve
 uma falha. Caso houve falha, e se havia alguma partida em execução, ele deve retomar o “controle”
 dessa partida passando a enviar os heartbeats para os clientes, caso eles ainda estejam conectados
-entre eles) (Implementado, mas sem apontar a falha, testado!)
+entre eles) (Implementado, testado)
 
 • Conexão realizada por um cliente (Endereço IP do cliente); (Implementado, testado)
 
