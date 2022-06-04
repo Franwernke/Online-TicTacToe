@@ -70,9 +70,19 @@ veio o login); (Implementado, testado)
 
 • Desconexão inesperada de um cliente, verificada pelos heartbeats (Endereço IP do cliente); (implementado testado, usamos o mecanismo do tcp)
 
-• Servidor finalizado (?????)
+• Servidor finalizado (OK)
 
 
  --------------------------------------------------------------
 
 Erro na comunicação dos clientes (CORRIGIDO)
+
+TODO:
+- Manter o estado dos clientes no servidor
+- Colocar o log de desligamento abrupto do servidor OK
+- Colocar o log de desligamento normal no servidor OK
+
+- Corrigir os prints dos tabuleiros
+- Inverter as jogadas do tabuleiros
+
+- Fazer os testes

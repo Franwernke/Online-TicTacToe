@@ -19,5 +19,4 @@ class UDPLayer(TransportLayer):
     return message
 
   def restartConnection(self):
-    self.sockfd.shutdown(SHUT_RDWR)
-    self.sockfd = socket(AF_INET, SOCK_DGRAM)
+    pass

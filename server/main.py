@@ -1,6 +1,7 @@
 #!/bin/python3
 
 import sys
+import signal
 from time import sleep
 from TCPController import TCPController
 from UDPController import UDPController
@@ -18,6 +19,13 @@ def main():
   tcpController = TCPController(port, server, log)
   tcpController.acceptConnections()
   print("O servidor está escutando na porta", port)
+
+  def sigkillHandler(sig, frame):
+    log.finishServer()
+    exit(1)
+
+  signal.signal(signal.SIGINT, sigkillHandler)
+
   while True:
     sleep(100)
 

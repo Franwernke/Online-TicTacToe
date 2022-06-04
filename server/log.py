@@ -6,10 +6,12 @@ LOGFILENAME = "log.will"
 
 class Log:
   def __init__(self):
+    self.serverFailure = False
+
     if not os.path.exists(BASEPATH + LOGPATH):
       os.makedirs(BASEPATH + LOGPATH)
     
-    file = open(BASEPATH + LOGPATH + LOGFILENAME, "w")
+    file = open(BASEPATH + LOGPATH + LOGFILENAME, "a+")
     file.write("Servidor iniciado!\n")
     file.close()
 
@@ -47,3 +49,8 @@ class Log:
 
   def finishServer(self):
     self.writeLogFile("Encerramento do servidor")
+
+  def serverFailed(self):
+    if not self.serverFailure:
+      self.writeLogFile("Um cliente informa que houve uma falha no servidor na última execução!")
+      self.serverFailure = True

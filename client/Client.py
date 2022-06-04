@@ -29,8 +29,8 @@ def verifyResponseTimeThread(responseTimeManager: ResponseTimeManager):
     elif delta > responseTimeManager.timeoutLimit:
       responseTimeManager.feedbackController.sendResponse("reconnect", FifoChoice.serverResponse)
       return
-    elif delta > 5:
-      responseTimeManager.feedbackController.sendResponse("", FifoChoice.serverResponse)
+    # elif delta > 5:
+    #   responseTimeManager.feedbackController.sendResponse("", FifoChoice.serverResponse)
     time.sleep(1.2)
 
 
@@ -151,7 +151,7 @@ class ClientDomain(ClientDomainI):
       try:
         self.serverOutput.transportLayer.restartConnection()
       except:
-        print("Tentei reestabelecer a conexão")
+        print("Não foi possível reestabelecer a conexão com o servidor")
         print("Processo do servidor foi finalizado por um ‘kill -9")
         exit(1)
 
@@ -174,6 +174,7 @@ class ClientDomain(ClientDomainI):
     responseTimeManager.receivedResponse = True
 
     if response == "reconnect":
+      print("Não foi possível reestabelecer a conexão com o servidor")
       print("Processo do servidor foi finalizado por um ‘kill -9")
       exit(1)
     
