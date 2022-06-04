@@ -15,6 +15,11 @@ class Controller:
 
 def listenThread(controller: Controller):
   while True:
-    message = controller.transportLayer.recvMessage()
+
+    try:
+      message = controller.transportLayer.recvMessage()
+    except:
+      message = ""
+
     if message:
       controller.router.route(message)

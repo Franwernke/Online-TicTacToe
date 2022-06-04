@@ -83,7 +83,10 @@ class GenericController:
     elif command[0] == "over":
       self.server.endgame(command[1], command[2])
       return "P OK"
-    
+
+    elif command[0] == "reconnect":
+      return "P OK"
+
     elif command[0] == "bye":
       self.log.disconnect(address[0])
       return "DONOTANSWER"

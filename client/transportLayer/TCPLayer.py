@@ -22,3 +22,10 @@ class TCPLayer(TransportLayer):
     message = self.sockfd.recv(4096).decode(ENCODING)
     return message
 
+  def restartConnection(self):
+    try:
+      self.sockfd.shutdown(SHUT_RDWR)
+    except:
+      pass
+    self.sockfd = socket(AF_INET, SOCK_STREAM)
+    self.sockfd.connect(self.serverAddress)

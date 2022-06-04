@@ -8,6 +8,31 @@ from output.Requester import Requester
 from clientStates import State, LoggedIn, HisTurn, MyTurn
 from socket import *
 
+class ResponseTimeManager:
+  def __init__(self, feedbackController: FeedbackController, timeoutLimit: int) -> None:
+    self.receivedResponse = False
+    self.feedbackController = feedbackController
+    self.timeoutLimit = timeoutLimit
+
+    self.timeCheckerThread = Thread(target=verifyResponseTimeThread, name="Response Time Checker Thread", args=[self])
+    self.timeCheckerThread.daemon = True
+
+  def verifyResponseTime(self):
+    self.timeCheckerThread.start()
+
+def verifyResponseTimeThread(responseTimeManager: ResponseTimeManager):
+  tic = time.perf_counter()
+  while True:
+    delta = time.perf_counter() - tic
+    if responseTimeManager.receivedResponse == True:
+      return
+    elif delta > responseTimeManager.timeoutLimit:
+      responseTimeManager.feedbackController.sendResponse("reconnect", FifoChoice.serverResponse)
+      return
+    elif delta > 5:
+      responseTimeManager.feedbackController.sendResponse("", FifoChoice.serverResponse)
+    time.sleep(1.2)
+
 
 class LatencyRepository:
   def __init__(self) -> None:
@@ -109,8 +134,50 @@ class ClientDomain(ClientDomainI):
     self.serverOutput.sendMessage("bye")
 
   def sendMessageToServer(self, message):
-    self.serverOutput.sendMessage(message)
-    return self.feedbackController.recvResponse(FifoChoice.serverResponse)
+    response = ""
+    
+    responseTimeManager = ResponseTimeManager(self.feedbackController, 180)
+    responseTimeManager.verifyResponseTime()
+    while not response:
+      try:
+        self.serverOutput.sendMessage(message)
+      except Exception:
+        pass
+      response = self.feedbackController.recvResponse(FifoChoice.serverResponse)
+    
+    responseTimeManager.receivedResponse = True
+
+    if response == "reconnect":
+      try:
+        self.serverOutput.transportLayer.restartConnection()
+      except:
+        print("Tentei reestabelecer a conexão")
+        print("Processo do servidor foi finalizado por um ‘kill -9")
+        exit(1)
+
+      self.tryToRecconect()
+
+      return self.sendMessageToServer(message)
+
+    return response
+  
+  def tryToRecconect(self):
+    response = ""
+
+    responseTimeManager = ResponseTimeManager(self.feedbackController, 10)
+    responseTimeManager.verifyResponseTime()
+
+    while not response:
+      self.serverOutput.sendMessage("reconnect")
+      response = self.feedbackController.recvResponse(FifoChoice.serverResponse)
+    
+    responseTimeManager.receivedResponse = True
+
+    if response == "reconnect":
+      print("Processo do servidor foi finalizado por um ‘kill -9")
+      exit(1)
+    
+
 
   def sendMessageToPeerToPeer(self, message):
     self.peerToPeerOutput.sendMessage(message)
