@@ -33,11 +33,11 @@ class Game:
       if i % 3 == 2:
         print("|\n+---+---+---+")
 
-  def checkValidPlay(self, playX, playY):
+  def checkValidPlay(self, playY, playX):
     return playX < 3 and playY < 3 and self.board[playX + playY*3] == 0
   
-  def markSpot(self, token, posX, posY):
-    if self.checkValidPlay(posX, posY):
+  def markSpot(self, token, posY, posX):
+    if self.checkValidPlay(posY, posX):
       self.board[posX + posY*3] = token
 
   def isDraw(self):
