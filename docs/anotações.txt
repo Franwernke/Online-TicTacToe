@@ -84,7 +84,7 @@ TODO:
 
 -Bug na tolerância à falha: 
   O udp só manda de volta seu estado de online durante uma requisição demorada (que falhou).
-  Isso faz ele ficar invisível
+  Isso faz ele ficar invisível se a falha não ocorreu durante uma requisição
 
 - Corrigir os prints dos tabuleiros
 - Inverter as jogadas do tabuleiros
