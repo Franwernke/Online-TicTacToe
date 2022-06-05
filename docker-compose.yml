@@ -2,7 +2,17 @@ version: '3.7'
 
 services:
   ep1:
-    build: .
+    build: ./server
     ports:
       - 8000:8000
     tty: true
+
+  client:
+    build: ./client
+    ports:
+     - "1-65535:1-65535"
+
+  anotherclient:
+    build: ./client
+    ports:
+     - "1-65535:1-65535"

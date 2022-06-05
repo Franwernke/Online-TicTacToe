@@ -16,4 +16,4 @@ COPY --from=base ./ ./
 
 EXPOSE $PORT
 
-CMD python3 server/main.py ${PORT}
+CMD python3 main.py ${PORT}
